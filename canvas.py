@@ -63,7 +63,7 @@ class Canvas(QtWidgets.QWidget):
         self.prevMovePoint = QtCore.QPoint()
         self.offsets = QtCore.QPoint(), QtCore.QPoint()
         self.scale = 1.0  # 缩放因子，在pattern_widget.py文件中控制
-        self.pixmap = QtGui.QPixmap()  # 背景图片
+        self.pixmap = None  # 背景图片
         self.visible = {}
         self._hideBackround = False
         self.hideBackround = False

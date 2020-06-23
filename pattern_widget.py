@@ -6,11 +6,16 @@ from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFileDialog
 
+import cv2
+
 import utils
 from canvas import Canvas
 from pattern import Pattern
 from ui.pcb_location import PCBLocationWidget
 from ui.pattern_info import PatternInfoWidget
+
+
+new_action = lambda icon, text: QtWidgets.QAction(QtGui.QIcon(icon), text)
 
 
 class PatternWidget(QtWidgets.QWidget):
@@ -22,7 +27,6 @@ class PatternWidget(QtWidgets.QWidget):
     '''
     def __init__(self):
         super().__init__()
-        new_action = lambda icon, text: QtWidgets.QAction(QtGui.QIcon(icon), text)
         # actions
         self.createAction = new_action('./icon/create-100.png', '新建程式')
         self.saveAction = new_action('./icon/save-64.png', '保存程式')
@@ -48,6 +52,7 @@ class PatternWidget(QtWidgets.QWidget):
         self.cursorAction.triggered.connect(self.cursor_action)
         self.pcbLocationAction.triggered.connect(self.pcb_location_action)
         self.createAction.triggered.connect(self.create_pattern)
+        self.openAction.triggered.connect(self.load_pattern)
 
         # init toolbar
         self.toolbar = QtWidgets.QToolBar()
@@ -93,11 +98,17 @@ class PatternWidget(QtWidgets.QWidget):
         # 第二页：定位信息页
         self.locationWidget = PCBLocationWidget()
         self.locationWidget.getImageSignal.connect(self.get_roi_image)
+        self.locationWidget.savePCBLocationInfomation.connect(self.save_pcb_base_infomation)
 
         self.rightTopArea = QtWidgets.QTabWidget()
         self.rightTopArea.addTab(self.patternInfoWidget, '程式信息')
         self.rightTopArea.addTab(self.locationWidget, '定位信息')
         self.rightTopArea.setCurrentWidget(self.patternInfoWidget)
+        self.rightTopArea.tabBarClicked.connect(self.tabel_widget_tabbar_clicked)
+
+        # 软件启动时，未加载程式，此时所有tab都设置为disable
+        for idx in range(self.rightTopArea.count()):
+            self.rightTopArea.setTabEnabled(idx, False)
 
         # right buttom view
         self.videoLabel = QtWidgets.QLabel()
@@ -123,31 +134,124 @@ class PatternWidget(QtWidgets.QWidget):
         self.setLayout(layout)
 
     def create_pattern(self):
+        ''' 选择文件夹，创建程式 '''
         folder = QtWidgets.QFileDialog.getExistingDirectory(self, '请选择一个程式文件夹', './')
         # print(folder)
         if not folder or not os.path.exists(folder):
             QtWidgets.QMessageBox.warning(self, '错误', '请选择一个文件夹路径')
             return
         self.pattern = Pattern(folder=folder)
+        self.show_pattern_info()
+
+    def load_pattern(self):
+        ''' 选择程式并加载 '''
+        folder = QtWidgets.QFileDialog.getExistingDirectory(self, '选择程式文件夹', './')
+        if not folder or not os.path.exists(folder):
+            QtWidgets.QMessageBox.warning(self, '错误', '请选择正确的程式路径')
+            return
+        imagefile = os.path.join(folder, 'image.jpg')
+        infofile = os.path.join(folder, 'info.json')
+        if not os.path.exists(imagefile) or not os.path.exists(infofile):
+            QtWidgets.QMessageBox.warning(self, '错误', '未找到程式信息，请选择正确的程式文件夹')
+            return
+        self.pattern = Pattern.from_folder(folder)
+        self.show_pattern_info()
+
+        # 加载CV数据
+        self.canvas.cvImage = cv2.imread(imagefile)
+
+        # 加载pixmap，并显示
+        orgPixmap = QtGui.QPixmap(imagefile)
+        x, y, w, h = self.pattern.ax_pcbs
+        rectangle = QtCore.QRect(x, y, w, h)
+        pixmap = orgPixmap.copy(rectangle)
+        self.canvas.loadPixmap(pixmap)
+        self.canvas.update()
+
+        # 模板加载，PCB截图加载
+        self.locationWidget.set_pixmap(self.locationWidget.pcbLabel, pixmap)
+        for i in [0, 1]:
+            if not self.pattern.ax_templates:
+                continue
+            x, y, w, h = self.pattern.ax_templates[i]
+            widget = self.locationWidget.templateLabel_1 if i == 0 else self.locationWidget.templateLabel_2
+            rectangle = QtCore.QRect(x, y, w, h)
+            pixmap = orgPixmap.copy(rectangle)
+            self.locationWidget.set_pixmap(widget, pixmap)
+
+        # enable all tabs
+        for idx in range(self.rightTopArea.count()):
+            self.rightTopArea.setTabEnabled(idx, True)
+
+    def show_pattern_info(self):
+        if not hasattr(self, 'pattern'):
+            return
+        self.rightTopArea.setTabEnabled(0, True)
+        self.rightTopArea.setCurrentWidget(self.patternInfoWidget)
+        self.patternInfoWidget.show_pattern_info(self.pattern.folder)
 
     def pcb_location_action(self):
         ''' PCB定位按钮响应函数 '''
+        if not hasattr(self, 'pattern') or not self.pattern.folder:
+            QtWidgets.QMessageBox.information(self, '提示', '请先创建或者载入程式')
+            return
+        if not self.canvas.pixmap:
+            # print('not self.canvas.pixmap ')
+            QtWidgets.QMessageBox.information(self, '提示', '请先抓取图片')
+            return
         if not self.canvas.maskMode:
             self.canvas.shapes.clear()
             self.canvas.update()
             self.canvas.maskMode = True
         self.draw_rectangle()
+        self.rightTopArea.setTabEnabled(1, True)
         self.rightTopArea.setCurrentWidget(self.locationWidget)
 
+    def tabel_widget_tabbar_clicked(self, index):
+        ''' 右上角tabwidget页面点击 '''
+        if index == 1:  # PCB定位页面
+            self.pcb_location_action()
+
+    def save_pcb_base_infomation(self):
+        if not hasattr(self, 'pattern'):
+            return
+        if not any(self.pattern.ax_templates):
+            QtWidgets.QMessageBox.information(self, '提示', '请先获取模板')
+            return
+        if not self.pattern.ax_pcbs:
+            QtWidgets.QMessageBox.information(self, '提示', '请先获取PCB板')
+            return
+        x, y, w, h = self.pattern.ax_pcbs
+        rectangle = QtCore.QRect(x, y, w, h)
+        pixmap = self.canvas.pixmap.copy(rectangle)
+        self.canvas.loadPixmap(pixmap)
+        self.canvas.update()
+        # 保存程式基础信息
+        self.pattern.save()
+
     def get_roi_image(self, widget):
+        ''' 获取模板或者PCB的相应函数。该函数截取用户绘制的区域，并显示在相应的widget中。
+            此外，本函数还负责保存截取区域的坐标参数，作为程式的基础信息并保存 '''
         if not self.canvas.pixmap:
             return
         if not self.canvas.shapes:
+            return
+        if not hasattr(self, 'pattern'):
             return
         shape = self.canvas.shapes[0]
         if len(shape.points) != 2:
             return
         rectangle = shape.getRectFromLine(*shape.points).toRect()
+        # 保存坐标信息
+        x, y, w, h = rectangle.x(), rectangle.y(), rectangle.width(), rectangle.height()
+        if widget == self.locationWidget.templateLabel_1:
+            self.pattern.set_template(0, x, y, w, h)
+        elif widget == self.locationWidget.templateLabel_2:
+            self.pattern.set_template(1, x, y, w, h)
+        elif widget == self.locationWidget.pcbLabel:
+            self.pattern.set_pcb_coordinate(x, y, w, h)
+            self.pattern.image = self.canvas.cvImage.copy()  # 设置图片
+
         pixmap = self.canvas.pixmap.copy(rectangle)
         self.locationWidget.set_pixmap(widget, pixmap)
 

@@ -12,6 +12,7 @@
 import os
 import json
 import random
+import cv2
 from pprint import pprint
 from collections import OrderedDict
 
@@ -32,9 +33,19 @@ class Pattern:
         self.mask_2 = None
         
         self.ax_pcbs = []  # PCB_ROI坐标集，格式 [x, y, w, h]
-        self.ax_templates = []  # 模板坐标集，格式 [[x, y, w, h]]
+        self.ax_templates = [[], []]  # 模板坐标集，格式 [[x, y, w, h]]
         self.ax_masks = []  # Mask坐标集，格式 [[x, y, w, h]], 注意：Mask坐标是相对于PCB_ROI的坐标
         self.parts = []
+
+    def set_template(self, index, x, y, w, h):
+        ''' 添加模板，或者修改模板。
+            index：模板编号，取值[0,1]
+        '''
+        assert index in [0, 1]
+        self.ax_templates[index] = [x, y, w, h]
+
+    def set_pcb_coordinate(self, x, y, w, h):
+        self.ax_pcbs = [x, y, w, h]
 
     def to_json(self):
         data = OrderedDict({
@@ -46,6 +57,17 @@ class Pattern:
         for part in self.parts:
             data['parts'].append(part.to_json())
         return data
+
+    def save(self):
+        if not self.folder or self.image is None:
+            return
+        # save origin cv image
+        imagefile = os.path.join(self.folder, 'image.jpg')
+        cv2.imwrite(imagefile, self.image)
+        # save parameter
+        infofile = os.path.join(self.folder, 'info.json')
+        with open(infofile, 'w', encoding='utf-8') as f:
+            json.dump(self.to_json(), f, indent=2)
 
     def load(self, folder):
         ''' 从本地文件夹加载配置 '''
