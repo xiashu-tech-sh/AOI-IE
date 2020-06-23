@@ -12,9 +12,6 @@ class OnlineWidget(QtWidgets.QWidget):
         3. 右上角信息展示区域，显示当前检测相关信息；
         4. 右下角在线预览区域，实时展示相机画面。
     '''
-    PatternSelectAction = pyqtSignal(str)
-    CameraOpenAction = pyqtSignal(bool)
-    CameraCloseAction = pyqtSignal(bool)
     def __init__(self):
         super().__init__()
         # init actions
@@ -67,19 +64,8 @@ class OnlineWidget(QtWidgets.QWidget):
         layout.addWidget(self.toolbar)
         layout.addLayout(hlayout)
         self.setLayout(layout)
-        self.patternSelectAction.triggered.connect(self.pattern_select_action)
-        self.cameraOpenAction.triggered.connect(self.camera_open_action)
-        self.cameraCloseAction.triggered.connect(self.camera_open_action)
 
-    def camera_open_action(self):
-        self.CameraCloseAction.emit(True)
 
-    def camera_open_action(self):
-        self.CameraOpenAction.emit(True)
-    def pattern_select_action(self):
-        dir_path = QFileDialog.getExistingDirectory(self,"请选择文件夹路径")
-        self.PatternSelectAction.emit(dir_path)
-        self.destroy()
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     win = OnlineWidget()

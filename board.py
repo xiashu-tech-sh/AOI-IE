@@ -8,8 +8,8 @@ class Board:
         self.datetime = None  # 检查日期
         self.result = []  # 检查结果
         self.parts = []  # 元器件列表
-        self.dirPath = '' # 程式路径
-        self.cameraStatus = False # 相机状态
+        # self.dirPath = '' # 程式路径
+        # self.cameraStatus = False # 相机状态
 
 
 if  __name__ == '__main__':

@@ -1,10 +1,16 @@
 import os
 import sys
+sys.path.append('./ui')
+from PyQt5.QtCore import Qt
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QFileDialog
 
+import utils
 from canvas import Canvas
+from pattern import Pattern
+from ui.pcb_location import PCBLocationWidget
+from ui.pattern_info import PatternInfoWidget
 
 
 class PatternWidget(QtWidgets.QWidget):
@@ -14,11 +20,6 @@ class PatternWidget(QtWidgets.QWidget):
         3. 右上角程式信息展示区域；
         4. 右下角相机实时预览区域。
     '''
-    CaptureAction = pyqtSignal(bool)
-    CreateAction = pyqtSignal(str)
-
-    MaskAction = pyqtSignal(bool)
-
     def __init__(self):
         super().__init__()
         new_action = lambda icon, text: QtWidgets.QAction(QtGui.QIcon(icon), text)
@@ -43,6 +44,11 @@ class PatternWidget(QtWidgets.QWidget):
 
         self.homeAction = new_action('./icon/home-50.png', '检测界面')
 
+        self.capacitorAction.triggered.connect(self.draw_rectangle)
+        self.cursorAction.triggered.connect(self.cursor_action)
+        self.pcbLocationAction.triggered.connect(self.pcb_location_action)
+        self.createAction.triggered.connect(self.create_pattern)
+
         # init toolbar
         self.toolbar = QtWidgets.QToolBar()
         self.toolbar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
@@ -56,15 +62,42 @@ class PatternWidget(QtWidgets.QWidget):
         self.toolbar.addSeparator()
         self.toolbar.addActions([self.homeAction])
         self.toolbar.setIconSize(QtCore.QSize(32, 32))
-        self.passWidget = QtWidgets.QWidget()
+        
         # left center view
-        # self.imageLabel = QtWidgets.QWidget()
-        self.imageWidget = Canvas()
-        self.imageWidget.setStyleSheet('background-color: rgb(0, 0, 0);')
-        # self.imageLabel.setAlignment(QtCore.Qt.AlignCenter)
+        self.canvas = Canvas()
+        # self.canvas.setStyleSheet('background-color: rgb(0, 0, 0);')
+
+        self.scrollArea = QtWidgets.QScrollArea()
+        self.scrollArea.setWidget(self.canvas)
+        self.scrollArea.setWidgetResizable(True)
+        self.scrollBars = {
+            Qt.Vertical: self.scrollArea.verticalScrollBar(),
+            Qt.Horizontal: self.scrollArea.horizontalScrollBar(),
+        }
+
+        self.zoomValue = 100.0  # 缩放尺度，100为原始尺寸
+        self.canvas.zoomRequest.connect(self.zoomRequest)
+        self.canvas.scrollRequest.connect(self.scrollRequest)
+        self.canvas.newShape.connect(self.new_shape)
+        self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
+
+        # TODO:canvas右键弹出菜单内容设定
+        actions_1 = [self.zoomInAction, self.zoomOutAction, self.captureAction]
+        actions_2 = [self.captureAction]
+        utils.addActions(self.canvas.menus[0], actions_1)
+        utils.addActions(self.canvas.menus[1], actions_2)
 
         # right top view: TODO
+        # 第一页：程式信息页
+        self.patternInfoWidget = PatternInfoWidget()
+        # 第二页：定位信息页
+        self.locationWidget = PCBLocationWidget()
+        self.locationWidget.getImageSignal.connect(self.get_roi_image)
 
+        self.rightTopArea = QtWidgets.QTabWidget()
+        self.rightTopArea.addTab(self.patternInfoWidget, '程式信息')
+        self.rightTopArea.addTab(self.locationWidget, '定位信息')
+        self.rightTopArea.setCurrentWidget(self.patternInfoWidget)
 
         # right buttom view
         self.videoLabel = QtWidgets.QLabel()
@@ -74,12 +107,12 @@ class PatternWidget(QtWidgets.QWidget):
         # right layout
         rightLayout = QtWidgets.QVBoxLayout()
         rightLayout.setSpacing(13)
-        rightLayout.addWidget(self.passWidget, 1)
+        rightLayout.addWidget(self.rightTopArea, 1)
         rightLayout.addWidget(self.videoLabel, 1)
 
         hlayout = QtWidgets.QHBoxLayout()
         hlayout.setSpacing(13)
-        hlayout.addWidget(self.imageWidget, 2)
+        hlayout.addWidget(self.scrollArea, 2)
         hlayout.addLayout(rightLayout, 1)
 
         # main layout
@@ -89,19 +122,114 @@ class PatternWidget(QtWidgets.QWidget):
         layout.addLayout(hlayout)
         self.setLayout(layout)
 
-        self.captureAction.triggered.connect(self.capture_action)
-        self.createAction.triggered.connect(self.create_action)
-        self.maskAction.triggered.connect(self.mask_action)
+    def create_pattern(self):
+        folder = QtWidgets.QFileDialog.getExistingDirectory(self, '请选择一个程式文件夹', './')
+        # print(folder)
+        if not folder or not os.path.exists(folder):
+            QtWidgets.QMessageBox.warning(self, '错误', '请选择一个文件夹路径')
+            return
+        self.pattern = Pattern(folder=folder)
 
-    def mask_action(self):
-        self.MaskAction.emit(True)
-    def capture_action(self):
-        self.CaptureAction.emit(True)
+    def pcb_location_action(self):
+        ''' PCB定位按钮响应函数 '''
+        if not self.canvas.maskMode:
+            self.canvas.shapes.clear()
+            self.canvas.update()
+            self.canvas.maskMode = True
+        self.draw_rectangle()
+        self.rightTopArea.setCurrentWidget(self.locationWidget)
 
-    def create_action(self):
-        dir_path = QFileDialog.getExistingDirectory(self, "请选择文件夹路径")
-        self.PatternSelectAction.emit(dir_path)
-        self.destroy()
+    def get_roi_image(self, widget):
+        if not self.canvas.pixmap:
+            return
+        if not self.canvas.shapes:
+            return
+        shape = self.canvas.shapes[0]
+        if len(shape.points) != 2:
+            return
+        rectangle = shape.getRectFromLine(*shape.points).toRect()
+        pixmap = self.canvas.pixmap.copy(rectangle)
+        self.locationWidget.set_pixmap(widget, pixmap)
+
+    # React to canvas signals.
+    def shapeSelectionChanged(self, selected_shapes):
+        self._noSelectionSlot = True
+        for shape in self.canvas.selectedShapes:
+            shape.selected = False
+        # self.labelList.clearSelection()
+        self.canvas.selectedShapes = selected_shapes
+        for shape in self.canvas.selectedShapes:
+            shape.selected = True
+            # item = self.labelList.findItemByShape(shape)
+            # self.labelList.selectItem(item)
+            # self.labelList.scrollToItem(item)
+        self._noSelectionSlot = False
+        n_selected = len(selected_shapes)
+        # self.actions.delete.setEnabled(n_selected)
+        # self.actions.copy.setEnabled(n_selected)
+        # self.actions.edit.setEnabled(n_selected == 1)
+
+    def new_shape(self):
+        # self.canvas.setLastLabel('a', {})
+        pass
+
+    def cursor_action(self):
+        self.canvas.setEditing(True)
+
+    def draw_rectangle(self):
+        self.canvas.setEditing(False)
+        self.canvas.createMode = 'rectangle'
+
+    def scrollRequest(self, delta, orientation):
+        units = - delta * 0.1  # natural scroll
+        bar = self.scrollBars[orientation]
+        value = bar.value() + bar.singleStep() * units
+        self.setScroll(orientation, value)
+
+    def setScroll(self, orientation, value):
+        self.scrollBars[orientation].setValue(value)
+        # self.scroll_values[orientation][self.filename] = value
+
+    # def setZoom(self, value):
+        # self.actions.fitWidth.setChecked(False)
+        # self.actions.fitWindow.setChecked(False)
+        # self.zoomMode = self.MANUAL_ZOOM
+        # self.zoomWidget.setValue(value)
+        # self.zoom_values[self.filename] = (self.zoomMode, value)
+
+    def addZoom(self, increment=1.1):
+        # self.setZoom(self.zoomWidget.value() * increment)
+        self.zoomValue = self.zoomValue * increment
+        self.paintCanvas()
+
+    def zoomRequest(self, delta, pos):
+        canvas_width_old = self.canvas.width()
+        units = 1.1
+        if delta < 0:
+            units = 0.9
+        self.addZoom(units)
+
+        canvas_width_new = self.canvas.width()
+        if canvas_width_old != canvas_width_new:
+            canvas_scale_factor = canvas_width_new / canvas_width_old
+
+            x_shift = round(pos.x() * canvas_scale_factor) - pos.x()
+            y_shift = round(pos.y() * canvas_scale_factor) - pos.y()
+
+            self.setScroll(
+                Qt.Horizontal,
+                self.scrollBars[Qt.Horizontal].value() + x_shift,
+            )
+            self.setScroll(
+                Qt.Vertical,
+                self.scrollBars[Qt.Vertical].value() + y_shift,
+            )
+
+    def paintCanvas(self):
+        assert self.canvas.pixmap is not None, "cannot paint null image"
+        self.canvas.scale = 0.01 * self.zoomValue
+        self.canvas.adjustSize()
+        self.canvas.update()
 
 
 if __name__ == '__main__':
