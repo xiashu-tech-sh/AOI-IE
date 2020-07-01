@@ -130,7 +130,8 @@ class MainWin(QtWidgets.QMainWindow):
             self.patternWidget.videoLabel.setPixmap(pixmap)
 
     def mask_action(self, maskBool):
-        self.patternWidget.imageWidget.mask_action(maskBool)
+        # self.patternWidget.imageWidget.mask_action(maskBool)
+        pass
 
     def camera_close_action(self, CameraBool):
         if self.cameraThread.isRunning():

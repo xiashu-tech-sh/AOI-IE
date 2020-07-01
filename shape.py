@@ -72,9 +72,8 @@ class Shape(object):
     @shape_type.setter
     def shape_type(self, value):
         if value is None:
-            value = 'polygon'
-        if value not in ['polygon', 'rectangle', 'point',
-           'line', 'circle', 'linestrip']:
+            raise ValueError('必须设定一个shape type')
+        if value not in ['location', 'mask', 'capacitor', 'resistor', 'slot', 'component']:
             raise ValueError('Unexpected shape_type: {}'.format(value))
         self._shape_type = value
 
@@ -88,7 +87,8 @@ class Shape(object):
             self.points.append(point)
 
     def canAddPoint(self):
-        return self.shape_type in ['polygon', 'linestrip']
+        # return self.shape_type in ['polygon', 'linestrip']
+        return False
 
     def popPoint(self):
         if self.points:
@@ -124,46 +124,22 @@ class Shape(object):
             line_path = QtGui.QPainterPath()
             vrtx_path = QtGui.QPainterPath()
 
-            if self.shape_type == 'rectangle':
-                assert len(self.points) in [1, 2]
-                if len(self.points) == 2:
-                    rectangle = self.getRectFromLine(*self.points)
-                    line_path.addRect(rectangle)
-                    # zp add
-                    xx = self.points[0].x()
-                    yy1 = self.points[0].y()
-                    yy2 = self.points[1].y()
-                    start = QtCore.QPointF(xx+20, yy1)
-                    end = QtCore.QPointF(xx+20, yy2)
-                    line_path.moveTo(start)
-                    line_path.lineTo(end)
-                    
-                for i in range(len(self.points)):
-                    self.drawVertex(vrtx_path, i)
-            elif self.shape_type == "circle":
-                assert len(self.points) in [1, 2]
-                if len(self.points) == 2:
-                    rectangle = self.getCircleRectFromLine(self.points)
-                    line_path.addEllipse(rectangle)
-                for i in range(len(self.points)):
-                    self.drawVertex(vrtx_path, i)
-            elif self.shape_type == "linestrip":
-                line_path.moveTo(self.points[0])
-                for i, p in enumerate(self.points):
-                    line_path.lineTo(p)
-                    self.drawVertex(vrtx_path, i)
-            else:
-                line_path.moveTo(self.points[0])
-                # Uncommenting the following line will draw 2 paths
-                # for the 1st vertex, and make it non-filled, which
-                # may be desirable.
-                # self.drawVertex(vrtx_path, 0)
-
-                for i, p in enumerate(self.points):
-                    line_path.lineTo(p)
-                    self.drawVertex(vrtx_path, i)
-                if self.isClosed():
-                    line_path.lineTo(self.points[0])
+            # if self.shape_type == 'rectangle':
+            assert len(self.points) in [1, 2]
+            if len(self.points) == 2:
+                rectangle = self.getRectFromLine(*self.points)
+                line_path.addRect(rectangle)
+                # zp add, 多加一条竖线
+                # xx = self.points[0].x()
+                # yy1 = self.points[0].y()
+                # yy2 = self.points[1].y()
+                # start = QtCore.QPointF(xx+20, yy1)
+                # end = QtCore.QPointF(xx+20, yy2)
+                # line_path.moveTo(start)
+                # line_path.lineTo(end)
+                
+            for i in range(len(self.points)):
+                self.drawVertex(vrtx_path, i)
 
             painter.drawPath(line_path)
             painter.drawPath(vrtx_path)
@@ -226,20 +202,20 @@ class Shape(object):
         return rectangle
 
     def makePath(self):
-        if self.shape_type == 'rectangle':
-            path = QtGui.QPainterPath()
-            if len(self.points) == 2:
-                rectangle = self.getRectFromLine(*self.points)
-                path.addRect(rectangle)
-        elif self.shape_type == "circle":
-            path = QtGui.QPainterPath()
-            if len(self.points) == 2:
-                rectangle = self.getCircleRectFromLine(self.points)
-                path.addEllipse(rectangle)
-        else:
-            path = QtGui.QPainterPath(self.points[0])
-            for p in self.points[1:]:
-                path.lineTo(p)
+        # if self.shape_type == 'rectangle':
+        path = QtGui.QPainterPath()
+        if len(self.points) == 2:
+            rectangle = self.getRectFromLine(*self.points)
+            path.addRect(rectangle)
+        # elif self.shape_type == "circle":
+        #     path = QtGui.QPainterPath()
+        #     if len(self.points) == 2:
+        #         rectangle = self.getCircleRectFromLine(self.points)
+        #         path.addEllipse(rectangle)
+        # else:
+        #     path = QtGui.QPainterPath(self.points[0])
+        #     for p in self.points[1:]:
+        #         path.lineTo(p)
         return path
 
     def boundingRect(self):

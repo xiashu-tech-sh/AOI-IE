@@ -16,6 +16,7 @@ import cv2
 from pprint import pprint
 from collections import OrderedDict
 
+from mask import Mask
 from parts import Part, MISSING, MISMATCH, REVERSE
 import algorithm as alg
 
@@ -26,15 +27,11 @@ class Pattern:
         self.folder = folder
         self.imagefile = None  # 图片文件，位于目标文件夹下的image.jpg
         self.infofile = None  # 参数文件，位于目标文件夹下的info.jpg
-        self.image = None
-        self.template_1 = None
-        self.template_2 = None
-        self.mask_1 = None
-        self.mask_2 = None
+        self.originCVImage = None  # 由相机采集的原始图像，未裁剪过的
         
         self.ax_pcbs = []  # PCB_ROI坐标集，格式 [x, y, w, h]
-        self.ax_templates = [[], []]  # 模板坐标集，格式 [[x, y, w, h]]
-        self.ax_masks = []  # Mask坐标集，格式 [[x, y, w, h]], 注意：Mask坐标是相对于PCB_ROI的坐标
+        self.ax_templates = []  # 模板坐标集，格式 [[x, y, w, h]]
+        self.masks = []  # Mask坐标集，格式 [[x, y, w, h]], 注意：Mask坐标是相对于PCB_ROI的坐标
         self.parts = []
 
     def set_template(self, index, x, y, w, h):
@@ -44,6 +41,13 @@ class Pattern:
         assert index in [0, 1]
         self.ax_templates[index] = [x, y, w, h]
 
+    def set_mask(self, index, x, y, w, h):
+        ''' 添加mask，或者修改mask。
+            index：模板编号，取值[0, 1, 2, 3]
+        '''
+        assert index in [0, 1, 2, 3]
+        self.masks[index] = [x, y, w, h]
+
     def set_pcb_coordinate(self, x, y, w, h):
         self.ax_pcbs = [x, y, w, h]
 
@@ -52,18 +56,21 @@ class Pattern:
             'folder': self.folder,
             'ax_pcbs': self.ax_pcbs,
             'ax_templates': self.ax_templates,
-            'ax_masks': self.ax_masks,
+            'masks': [],
             'parts': []})
+        for mask in self.masks:
+            data['masks'].append(mask.to_json())
         for part in self.parts:
             data['parts'].append(part.to_json())
         return data
 
     def save(self):
-        if not self.folder or self.image is None:
+        if not self.folder or self.originCVImage is None:
+            print('folder or image not found')
             return
         # save origin cv image
         imagefile = os.path.join(self.folder, 'image.jpg')
-        cv2.imwrite(imagefile, self.image)
+        cv2.imwrite(imagefile, self.originCVImage)
         # save parameter
         infofile = os.path.join(self.folder, 'info.json')
         with open(infofile, 'w', encoding='utf-8') as f:
@@ -80,9 +87,12 @@ class Pattern:
         assert os.path.exists(infofile), '参数文件不存在'
         self.infofile = infofile
 
+        # load image
+        self.originCVImage = cv2.imread(imagefile)
+
         # clear first
         self.ax_pcbs.clear()
-        self.ax_masks.clear()
+        self.masks.clear()
         self.ax_templates.clear()
         self.parts.clear()
         
@@ -90,34 +100,37 @@ class Pattern:
         with open(infofile, 'r', encoding='utf-8') as f:
             jsondata = json.load(f)
         
-        self.folder = jsondata['folder']
         self.ax_pcbs = list(jsondata['ax_pcbs'])
         self.ax_templates = list(jsondata['ax_templates'])
-        self.ax_masks = list(jsondata['ax_masks'])
+        for mask in jsondata['masks']:
+            self.masks.append(Mask.from_json(mask))
         for part in jsondata['parts']:
             self.parts.append(Part.from_json(part))
 
 
-    @staticmethod
-    def from_json(jsondata):
-        obj = Pattern(folder=jsondata['folder'])
-        obj.ax_pcbs = list(jsondata['ax_pcbs'])
-        obj.ax_templates = list(jsondata['ax_templates'])
-        obj.ax_masks = list(jsondata['ax_masks'])
-        for part in jsondata['parts']:
-            obj.parts.append(Part.from_json(part))
-        return obj
-
+    # @staticmethod
+    # def from_json(jsondata):
+    #     obj = Pattern(folder=jsondata['folder'])
+    #     obj.ax_pcbs = list(jsondata['ax_pcbs'])
+    #     obj.ax_templates = list(jsondata['ax_templates'])
+    #     # obj.masks = list(jsondata['masks'])
+    #     for mask in jsondata['masks']:
+    #         obj.masks.append(Mask.from_json(mask))
+    #     for part in jsondata['parts']:
+    #         obj.parts.append(Part.from_json(part))
+    #     return obj
 
     @staticmethod
     def from_folder(folder):
         ''' 从文件重建类 '''
-        filename = os.path.join(folder, 'info.json')
-        assert os.path.exists(filename), '文件不存在: {}'.format(filename)
-        with open(filename, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        return Pattern.from_json(data)
-
+        # filename = os.path.join(folder, 'info.json')
+        # assert os.path.exists(filename), '文件不存在: {}'.format(filename)
+        # with open(filename, 'r', encoding='utf-8') as f:
+        #     data = json.load(f)
+        # return Pattern.from_json(data)
+        obj = Pattern(folder=folder)
+        obj.load(folder)
+        return obj
 
 
 ''' 以下函数为测试用例 '''
@@ -143,17 +156,17 @@ def test_write_json(folder='./test_folder'):
     return obj.to_json()
 
 
-def test_restore_from_json(folder='./test_folder'):
+def test_restore_from_folder(folder='./test_folder'):
     ''' 根据json数据还原类 '''
-    with open('abc.json', 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    return Pattern.from_json(data)
+    # with open('abc.json', 'r', encoding='utf-8') as f:
+    #     data = json.load(f)
+    return Pattern.from_folder(folder)
 
 
 def test_invariance_between_write_and_read():
     ''' 测试写入json的数据和读取json的数据是否一致 '''
     jsonWrite = test_write_json()
-    restoreObj = test_restore_from_json()
+    restoreObj = test_restore_from_folder()
     jsonRead = restoreObj.to_json()
     assert jsonWrite == jsonRead, '数据写入json前后不一致'
 
