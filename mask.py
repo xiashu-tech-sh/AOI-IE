@@ -18,9 +18,9 @@ class Mask:
 
     def binary_threshold_changed(self, threshold):
         ''' 阈值变化后，重新生成用于显示用的pixmap，返回pixmap '''
-        if not self.cvGrayImage:
+        if self.cvGrayImage is None:
             raise Exception('程序错误')
-        if threshold == self.binaryThreshold and self.pixmap:
+        if threshold == self.binaryThreshold and self.pixmap is not None:
             return self.pixmap
         self.binaryThreshold = threshold
         _, self.binaryImage = cv2.threshold(self.cvGrayImage, self.binaryThreshold, 255, cv2.THRESH_BINARY)

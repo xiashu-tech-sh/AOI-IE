@@ -29,6 +29,8 @@ class Ui_Form(object):
         self.previewLabel.setSizePolicy(sizePolicy)
         self.previewLabel.setStyleSheet("background-color: rgb(202, 202, 202);")
         self.previewLabel.setText("")
+        self.previewLabel.setScaledContents(False)
+        self.previewLabel.setAlignment(QtCore.Qt.AlignCenter)
         self.previewLabel.setObjectName("previewLabel")
         self.verticalLayout_2.addWidget(self.previewLabel)
         self.verticalLayout_2.setStretch(1, 1)

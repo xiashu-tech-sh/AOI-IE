@@ -13,6 +13,9 @@ class MaskWidget(QtWidgets.QWidget, Ui_Form):
         ''' Maks页面 '''
         super().__init__()
         self.setupUi(self)
+        self.threshSlider.setRange(0, 255)
+        self.threshSlider.sliderMoved.connect(self.threshold_changed)
+        self.previewLabel.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
 
         self.currentMask = None
         self.maskList = []
@@ -25,7 +28,16 @@ class MaskWidget(QtWidgets.QWidget, Ui_Form):
 
     def set_mask(self, mask):
         self.currentMask = mask
+        self.threshSlider.setValue(self.currentMask.binaryThreshold)
         pixmap = self.currentMask.pixmap.scaled(self.previewLabel.size(), QtCore.Qt.KeepAspectRatio)
+        self.previewLabel.setPixmap(pixmap)
+
+    def threshold_changed(self, value):
+        ''' 拖动slider后的响应函数，更新图片显示 '''
+        if not self.currentMask:
+            return
+        pixmap = self.currentMask.binary_threshold_changed(value)
+        pixmap = pixmap.scaled(self.previewLabel.size(), QtCore.Qt.KeepAspectRatio)
         self.previewLabel.setPixmap(pixmap)
 
     def update_pixmap_show(self):
@@ -37,12 +49,13 @@ class MaskWidget(QtWidgets.QWidget, Ui_Form):
         if not self.currentMask and not self.maskList:
             QtWidgets.QMessageBox.warning(self, '提示', '请先选择一个mask')
             return
-        elif self.currentMask:  # 新保存
+        elif self.currentMask and self.currentMask not in self.maskList:  # 新保存
             self.maskList.append(self.currentMask)
             self.currentMask = None
             self.update_listwidget()
             count = self.listWidget.count()
             self.listWidget.setCurrentRow(count-1)
+            print('add new mask')
         else:  # 修改, TODO
             pass
         self.savePatternSignal.emit()
@@ -52,9 +65,12 @@ class MaskWidget(QtWidgets.QWidget, Ui_Form):
         for i in range(len(self.maskList)):
             self.listWidget.addItem('mask_{}'.format(i+1))
         if self.maskList:
-            self.listWidget.setCurrentRow(0)
+            self.listWidget.setCurrentRow(0)  # 显示第一个mask
+            self.threshSlider.setValue(self.maskList[0].binaryThreshold)
+            # self.item_changed(0)  # 显示第一个mask
 
     def item_changed(self, rowIndex):
-        pixmap = self.maskList[rowIndex].pixmap
+        self.currentMask = self.maskList[rowIndex]
+        pixmap = self.currentMask.pixmap
         pixmap = pixmap.scaled(self.previewLabel.size(), QtCore.Qt.KeepAspectRatio)
         self.previewLabel.setPixmap(pixmap)
