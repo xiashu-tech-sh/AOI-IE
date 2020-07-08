@@ -37,9 +37,10 @@ class Shape(object):
     point_size = 8
     scale = 1.0
 
-    def __init__(self, label=None, line_color=None, shape_type=None,
+    def __init__(self, name='', data_obj=None, line_color=None, shape_type=None,
                  flags=None, group_id=None):
-        self.label = label
+        # self.data_obj = data_obj  # 传入pattern中具有坐标元素的对象的引用，如mask，template，part等对象，这些对象必须有x,y,w,h参数
+        self.name = name
         self.group_id = group_id
         self.points = []
         self.fill = False
@@ -55,7 +56,7 @@ class Shape(object):
             self.MOVE_VERTEX: (1.5, self.P_SQUARE),
         }
 
-        self._closed = False
+        # self._closed = False
 
         if line_color is not None:
             # Override the class line_color attribute
@@ -65,6 +66,13 @@ class Shape(object):
 
         self.shape_type = shape_type
 
+        # 如果data_obj有数据，则获取其坐标
+        # if data_obj:
+        #     x, y, w, h = data_obj.x, data_obj.y, data_obj.w, data_obj.h
+        #     p1 = QtCore.QPoint(x, y)
+        #     p2 = QtCore.QPoint(x+w, y+h)
+        #     self.points.extend([p1, p2])
+
     @property
     def shape_type(self):
         return self._shape_type
@@ -73,16 +81,17 @@ class Shape(object):
     def shape_type(self, value):
         if value is None:
             raise ValueError('必须设定一个shape type')
-        if value not in ['location', 'mask', 'capacitor', 'resistor', 'slot', 'component']:
+        if value not in ['location', 'template', 'mask', 'capacitor', 'resistor', 'slot', 'component']:
             raise ValueError('Unexpected shape_type: {}'.format(value))
         self._shape_type = value
 
-    def close(self):
-        self._closed = True
+    # def close(self):
+    #     self._closed = True
 
     def addPoint(self, point):
         if self.points and point == self.points[0]:
-            self.close()
+            # self.close()
+            pass
         else:
             self.points.append(point)
 
@@ -101,11 +110,11 @@ class Shape(object):
     def removePoint(self, i):
         self.points.pop(i)
 
-    def isClosed(self):
-        return self._closed
+    # def isClosed(self):
+    #     return self._closed
 
-    def setOpen(self):
-        self._closed = False
+    # def setOpen(self):
+    #     self._closed = False
 
     def getRectFromLine(self, pt1, pt2):
         x1, y1 = pt1.x(), pt1.y()

@@ -5,11 +5,12 @@ from PyQt5 import QtGui
 
 
 class Mask:
-    def __init__(self, x=0, y=0, w=0, h=0):
+    def __init__(self, x=0, y=0, w=0, h=0, name=''):
         self.x = x
         self.y = y
         self.w = w
         self.h = h
+        self.name = name
         self.pixmap = None  # pixmap，用于显示
         self.cvColorImage = None  # cv彩色图像
         self.cvGrayImage = None  # cv灰度图
@@ -38,7 +39,7 @@ class Mask:
         # get color image
         # cv2.imshow('cvimage', cvImage)
         # cv2.waitKey(0)
-        self.cvColorImage = cvImage[y:y+h+1, x:x+w+1, :]
+        self.cvColorImage = cvImage[y:y+h, x:x+w, :].copy()
         # cv2.imshow('colorimage', self.cvColorImage)
         # generate gray image
         self.cvGrayImage = cv2.cvtColor(self.cvColorImage, cv2.COLOR_BGR2GRAY)
@@ -56,6 +57,7 @@ class Mask:
             'y': self.y,
             'w': self.w,
             'h': self.h,
+            'name': self.name,
             'binaryThreshold': self.binaryThreshold})
         return data
 
@@ -66,5 +68,6 @@ class Mask:
         obj.y = jsondata['y']
         obj.w = jsondata['w']
         obj.h = jsondata['h']
+        obj.name = jsondata['name']
         obj.binaryThreshold = jsondata['binaryThreshold']
         return obj

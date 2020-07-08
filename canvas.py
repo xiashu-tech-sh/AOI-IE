@@ -5,6 +5,9 @@ from qtpy import QtWidgets
 
 from qtpy import QT_VERSION
 QT5 = QT_VERSION[0] == '5'
+from template import Template
+from mask import Mask
+from part import Part
 from shape import Shape
 import utils
 
@@ -24,7 +27,8 @@ class Canvas(QtWidgets.QWidget):
 
     zoomRequest = QtCore.Signal(int, QtCore.QPoint)  # 缩放事件，按住ctrl+鼠标滚轮后触发
     scrollRequest = QtCore.Signal(int, int)  # 滚轮直接滚动：上下sroll； 按住alt+滚轮：左右scroll
-    newShape = QtCore.Signal()  # 一个形状绘制完成后触发
+    newShape = QtCore.Signal(str)  # 一个形状绘制完成后触发
+    deleteShape = QtCore.Signal(str, str)  # 删除形状,参数：classes, name
     selectionChanged = QtCore.Signal(list)  # EDIT阶段，鼠标选中的Shape发生变化后触发，CREATE阶段不触发
     shapeMoved = QtCore.Signal()
     drawingPolygon = QtCore.Signal(bool)
@@ -49,27 +53,13 @@ class Canvas(QtWidgets.QWidget):
         super(Canvas, self).__init__(*args, **kwargs)
         # Initialise local state.
         self.mode = self.EDIT  # EDIT:编辑模式，可以改变形状、移动、复制； CREATE:绘制模式
-        # self.shapes = []  # objects of Shape in shape.py
-        self.locationShapes = []  # 定位模板形状，最多两个
-        self.maskShapes = []  # mask形状，最多四个
-        self.capacitorShapes = []  # 电容形状
-        self.resistorShapes = []  # 电阻形状
-        self.slotShapes = []  # 插槽形状
-        self.componentShapes = []  # 一般元器件形状
-        self.modeToShapeList = {
-            'location': self.locationShapes, 
-            'mask': self.maskShapes, 
-            'capacitor': self.capacitorShapes, 
-            'resistor': self.resistorShapes, 
-            'slot': self.slotShapes, 
-            'component': self.componentShapes
-        }
+        self.shapes = []  # objects of Shape in shape.py
         # self.shapesBackups = []  # 保存形状列表，如 [[shape1, shape2], [shape1, shape2, shape3]]
         self.current = None  # 当前形状，Shape类的实例对象
         self.selectedShapes = []  # save the selected shapes here
         # self.selectedShapesCopy = []  # 当拖动所选形状后，所选项会拷贝到此处，用于后面的移动或复制
-        # self.line represents:
-        #   - createMode == 'location': 定位模板
+        #   - createMode == 'location': PCB定位
+        #   - createMode == 'template': 定位模板
         #   - createMode == 'mask': Mask点
         #   - createMode == 'capacitor': 电容 
         #   - createMode == 'resistor': 电阻
@@ -97,12 +87,22 @@ class Canvas(QtWidgets.QWidget):
         # 0: right-click without selection and dragging of shapes
         # 1: right-click with selection and dragging of shapes
         self.menus = (QtWidgets.QMenu(), QtWidgets.QMenu())
+        self.delShapeAction = QtWidgets.QAction('删除')
+        self.delShapeAction.triggered.connect(self.delete_shape_action_clicked)
+        self.menus[1].addAction(self.delShapeAction)
         # Set widget options.
         self.setMouseTracking(True)
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
 
         # 存储的numpy格式的图像数据
         self.cvImage = None
+
+    def delete_shape_action_clicked(self):
+        if not self.hShape and not self.selectedShapes:
+            return
+        shape = self.selectedShapes.pop()
+        self.deleteShape.emit(shape.shape_type, shape.name)
+        self.shapes.remove(shape)
 
     def fillDrawing(self):
         return self._fill_drawing
@@ -116,7 +116,7 @@ class Canvas(QtWidgets.QWidget):
 
     @createMode.setter
     def createMode(self, value):
-        if value not in ['location', 'mask', 'capacitor', 'resistor', 'slot', 'component']:
+        if value not in ['location', 'template', 'mask', 'capacitor', 'resistor', 'slot', 'component']:
             raise ValueError('Unsupported createMode: %s' % value)
         self._createMode = value
 
@@ -152,6 +152,7 @@ class Canvas(QtWidgets.QWidget):
         if self.hShape:
             self.hShape.highlightClear()
             self.update()
+        # print('hShape set to None')
         self.hShape = self.hVertex = self.hEdge = None
 
     def selectedVertex(self):
@@ -185,7 +186,7 @@ class Canvas(QtWidgets.QWidget):
 
             # zp add, 只绘制矩形
             self.line.points = [self.current[0], pos]
-            self.line.close()
+            # self.line.close()
 
             self.repaint()
             self.current.highlightClear()
@@ -209,9 +210,7 @@ class Canvas(QtWidgets.QWidget):
         # - Highlight vertex
         # Update shape/vertex fill and tooltip value accordingly.
         # self.setToolTip(self.tr("Image"))
-        # for shape in reversed([s for s in self.shapes if self.isVisible(s)]):
-        for shape in reversed(list(itertools.chain.from_iterable([self.locationShapes, self.maskShapes, 
-                              self.capacitorShapes, self.resistorShapes, self.slotShapes, self.componentShapes]))):
+        for shape in reversed([s for s in self.shapes if self.isVisible(s)]):
             # Look for a nearby vertex to highlight. If that fails,
             # check if we happen to be inside a shape.
             index = shape.nearestVertex(pos, self.epsilon / self.scale)
@@ -232,10 +231,11 @@ class Canvas(QtWidgets.QWidget):
                 if self.selectedVertex():
                     self.hShape.highlightClear()
                 self.hVertex = None
+                # print('set hshape')
                 self.hShape = shape
                 self.hEdge = index_edge
                 self.setToolTip(
-                    self.tr("Click & drag to move shape '%s'") % shape.label)
+                    self.tr("Click & drag to move shape '%s'") % shape.name)
                 self.setStatusTip(self.toolTip())
                 self.overrideCursor(CURSOR_GRAB)
                 self.update()
@@ -256,7 +256,7 @@ class Canvas(QtWidgets.QWidget):
                     # zp add, 只绘制矩形
                     assert len(self.current.points) == 1
                     self.current.points = self.line.points
-                    self.finalise()
+                    self.finalise()  # 把 current拷贝到相应列表，完成绘制
                     
                 elif not self.outOfPixmap(pos):
                     # Mask只允许有4个，Location只允许有三个
@@ -281,7 +281,9 @@ class Canvas(QtWidgets.QWidget):
 
     def mouseReleaseEvent(self, ev):
         if ev.button() == QtCore.Qt.RightButton:
-            pass
+            pos = self.transformPos(ev.localPos())
+            if self.hShape and self.hShape.containsPoint(pos):
+                self.menus[1].exec_(self.mapToGlobal(ev.pos()))
             # menu = self.menus[len(self.selectedShapesCopy) > 0]
             # self.restoreCursor()
             # if not menu.exec_(self.mapToGlobal(ev.pos())) \
@@ -318,9 +320,7 @@ class Canvas(QtWidgets.QWidget):
             index, shape = self.hVertex, self.hShape
             shape.highlightVertex(index, shape.MOVE_VERTEX)
         else:
-            # for shape in reversed(self.shapes):
-            for shape in reversed(list(itertools.chain.from_iterable([self.locationShapes, self.maskShapes, 
-                                  self.capacitorShapes, self.resistorShapes, self.slotShapes, self.componentShapes]))):
+            for shape in reversed(self.shapes):
                 if self.isVisible(shape) and shape.containsPoint(point):
                     self.calculateOffsets(shape, point)
                     self.setHiding()
@@ -377,25 +377,6 @@ class Canvas(QtWidgets.QWidget):
             self.selectionChanged.emit([])
             self.update()
 
-    # def deleteSelected(self):
-    #     deleted_shapes = []
-    #     if self.selectedShapes:
-    #         for shape in self.selectedShapes:
-    #             self.shapes.remove(shape)
-    #             deleted_shapes.append(shape)
-    #         # self.storeShapes()
-    #         self.selectedShapes = []
-    #         self.update()
-    #     return deleted_shapes
-
-    def copySelectedShapes(self):
-        pass
-        # if self.selectedShapes:
-        #     self.selectedShapesCopy = [s.copy() for s in self.selectedShapes]
-        #     self.boundedShiftShapes(self.selectedShapesCopy)
-        #     self.endMove(copy=True)
-        # return self.selectedShapes
-
     def boundedShiftShapes(self, shapes):
         # Try to move in one direction, and if it fails in another.
         # Give up if both fail.
@@ -421,9 +402,7 @@ class Canvas(QtWidgets.QWidget):
 
         p.drawPixmap(0, 0, self.pixmap)
         Shape.scale = self.scale
-        # for shape in self.shapes:
-        for shape in itertools.chain.from_iterable([self.locationShapes, self.maskShapes, 
-                                                    self.capacitorShapes, self.resistorShapes, self.slotShapes, self.componentShapes]):
+        for shape in self.shapes:
             # 此处只显示当前种类的方框，根据TabWidget界面选择情况进行切换，比如Mask页面只显示Mask框
             if shape.shape_type != self.createMode:
                 continue
@@ -435,11 +414,7 @@ class Canvas(QtWidgets.QWidget):
         if self.current:
             self.current.paint(p)
             self.line.paint(p)
-            # print('paint current')
-        # if self.selectedShapesCopy:
-        #     for s in self.selectedShapesCopy:
-        #         s.paint(p)
-                # print('paint seleted')
+
         p.end()
 
     def transformPos(self, point):
@@ -461,13 +436,10 @@ class Canvas(QtWidgets.QWidget):
 
     def finalise(self):
         assert self.current
-        self.current.close()
-        # self.shapes.append(self.current)
-        self.modeToShapeList[self.createMode].append(self.current)
-        # self.storeShapes()
+        self.shapes.append(self.current)
         self.current = None
         self.setHiding(False)
-        self.newShape.emit()
+        self.newShape.emit(self.createMode)
         self.update()
 
     def closeEnough(self, p1, p2):
@@ -568,31 +540,26 @@ class Canvas(QtWidgets.QWidget):
                 self.scrollRequest.emit(ev.delta(), QtCore.Qt.Horizontal)
         ev.accept()
 
-    def keyPressEvent(self, ev):
-        key = ev.key()
-        if key == QtCore.Qt.Key_Escape and self.current:
-            self.current = None
-            self.drawingPolygon.emit(False)
-            self.update()
-        elif key == QtCore.Qt.Key_Return and self.canCloseShape():
-            self.finalise()
+    # def keyPressEvent(self, ev):
+    #     key = ev.key()
+    #     if key == QtCore.Qt.Key_Escape and self.current:
+    #         self.current = None
+    #         self.drawingPolygon.emit(False)
+    #         self.update()
+    #     elif key == QtCore.Qt.Key_Return and self.canCloseShape():
+    #         self.finalise()
 
     def loadPixmap(self, pixmap):
         self.pixmap = pixmap
-        # self.shapes = []
         # 清空所有形状
-        for key in self.modeToShapeList.keys():
-            self.modeToShapeList[key].clear()
+        self.shapes.clear()
         self.repaint()
 
     def loadShapes(self, shapes, replace=True):
-        # if replace:
-        #     self.shapes = list(shapes)
-        # else:
-        #     self.shapes.extend(shapes)
-        for shape in shapes:
-            self.modeToShapeList[shape.shape_type].append(shape)
-        # self.storeShapes()
+        if replace:
+            self.shapes = list(shapes)
+        else:
+            self.shapes.extend(shapes)
         self.current = None
         self.hShape = None
         self.hVertex = None

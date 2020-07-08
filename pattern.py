@@ -16,8 +16,9 @@ import cv2
 from pprint import pprint
 from collections import OrderedDict
 
+from template import Template
 from mask import Mask
-from parts import Part, MISSING, MISMATCH, REVERSE
+from part import Part, MISSING, MISMATCH, REVERSE
 import algorithm as alg
 
 
@@ -28,36 +29,45 @@ class Pattern:
         self.imagefile = None  # 图片文件，位于目标文件夹下的image.jpg
         self.infofile = None  # 参数文件，位于目标文件夹下的info.jpg
         self.originCVImage = None  # 由相机采集的原始图像，未裁剪过的
+        self.pcbCVImage = None  # 根据PCB坐标裁剪出来的图片
         
         self.ax_pcbs = []  # PCB_ROI坐标集，格式 [x, y, w, h]
-        self.ax_templates = []  # 模板坐标集，格式 [[x, y, w, h]]
+        self.templates = []  # 模板坐标集，格式 [[x, y, w, h]]
         self.masks = []  # Mask坐标集，格式 [[x, y, w, h]], 注意：Mask坐标是相对于PCB_ROI的坐标
         self.parts = []
 
-    def set_template(self, index, x, y, w, h):
-        ''' 添加模板，或者修改模板。
-            index：模板编号，取值[0,1]
-        '''
-        assert index in [0, 1]
-        self.ax_templates[index] = [x, y, w, h]
-
-    def set_mask(self, index, x, y, w, h):
-        ''' 添加mask，或者修改mask。
-            index：模板编号，取值[0, 1, 2, 3]
-        '''
-        assert index in [0, 1, 2, 3]
-        self.masks[index] = [x, y, w, h]
+        self.dirty = False  # pattern修改后变成True
 
     def set_pcb_coordinate(self, x, y, w, h):
         self.ax_pcbs = [x, y, w, h]
+
+    def new_name(self, classes):
+        ''' 按序号获取制定类别的新名称 '''
+        shapeList = None
+        if classes == 'location':
+            return ''  # location模块特殊处理
+        elif classes == 'template':
+            shapeList = self.templates
+        elif classes == 'mask':
+            shapeList = self.masks
+        elif classes == 'capacitor':
+            pass
+        # TODO
+        exists = [x.name for x in shapeList]
+        for i in range(len(exists)+1):
+            name = '{}_{}'.format(classes, i+1)
+            if name not in exists:
+                return name
 
     def to_json(self):
         data = OrderedDict({
             'folder': self.folder,
             'ax_pcbs': self.ax_pcbs,
-            'ax_templates': self.ax_templates,
+            'templates': [],
             'masks': [],
             'parts': []})
+        for template in self.templates:
+            data['templates'].append(template.to_json())
         for mask in self.masks:
             data['masks'].append(mask.to_json())
         for part in self.parts:
@@ -87,13 +97,10 @@ class Pattern:
         assert os.path.exists(infofile), '参数文件不存在'
         self.infofile = infofile
 
-        # load image
-        self.originCVImage = cv2.imread(imagefile)
-
         # clear first
         self.ax_pcbs.clear()
         self.masks.clear()
-        self.ax_templates.clear()
+        self.templates.clear()
         self.parts.clear()
         
         # load data
@@ -101,11 +108,18 @@ class Pattern:
             jsondata = json.load(f)
         
         self.ax_pcbs = list(jsondata['ax_pcbs'])
-        self.ax_templates = list(jsondata['ax_templates'])
+        for template in jsondata['templates']:
+            self.templates.append(Template.from_json(template))
         for mask in jsondata['masks']:
             self.masks.append(Mask.from_json(mask))
         for part in jsondata['parts']:
             self.parts.append(Part.from_json(part))
+
+        # load image
+        self.originCVImage = cv2.imread(imagefile)
+        if self.ax_pcbs:
+            x, y, w, h = self.ax_pcbs
+            self.pcbCVImage = self.originCVImage[y:y+h, x:x+w, :].copy()
 
 
     # @staticmethod

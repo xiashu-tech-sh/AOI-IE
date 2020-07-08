@@ -6,8 +6,10 @@ from mask import Mask
 
 class MaskWidget(QtWidgets.QWidget, Ui_Form):
 
-    getMaskSignal = QtCore.pyqtSignal(QtWidgets.QLabel, name='getMaskSignal')  # 获取模板信号，参数为需要显示的控件
+    # getMaskSignal = QtCore.pyqtSignal(QtWidgets.QLabel, name='getMaskSignal')  # 获取模板信号，参数为需要显示的控件
+    # newMaskShape = QtCore.pyqtSignal(str, str, name='newMaskShape')  # 请求创建新的mask
     savePatternSignal = QtCore.pyqtSignal(name='savePatternSignal')  # 保存pattern
+    selectedChanged = QtCore.pyqtSignal(str, str, name='selectedChanged')
 
     def __init__(self):
         ''' Maks页面 '''
@@ -19,18 +21,28 @@ class MaskWidget(QtWidgets.QWidget, Ui_Form):
 
         self.currentMask = None
         self.maskList = []
-        self.getCircleButton.clicked.connect(self.get_circle_button_clicked)
-        self.saveButton.clicked.connect(self.save_button_clicked)
+        # self.getCircleButton.clicked.connect(self.get_circle_button_clicked)
+        self.saveButton.clicked.connect(self.savePatternSignal)
         self.listWidget.currentRowChanged.connect(self.item_changed)
 
-    def get_circle_button_clicked(self):
-        self.getMaskSignal.emit(self.previewLabel)
+    # def get_circle_button_clicked(self):
+        # self.getMaskSignal.emit(self.previewLabel)
 
     def set_mask(self, mask):
         self.currentMask = mask
         self.threshSlider.setValue(self.currentMask.binaryThreshold)
         pixmap = self.currentMask.pixmap.scaled(self.previewLabel.size(), QtCore.Qt.KeepAspectRatio)
         self.previewLabel.setPixmap(pixmap)
+
+    def delete_by_name(self, name=''):
+        index = -1
+        for i, mask in enumerate(self.maskList):
+            if mask.name == name:
+                index = i
+                break
+        if index >= 0:
+            self.maskList.pop(index)
+            self.listWidget.takeItem(index)  # remove row from qlistwidget
 
     def threshold_changed(self, value):
         ''' 拖动slider后的响应函数，更新图片显示 '''
@@ -44,8 +56,9 @@ class MaskWidget(QtWidgets.QWidget, Ui_Form):
         if self.currentMask:
             pixmap = self.currentMask.pixmap.scaled(self.previewLabel.size(), QtCore.Qt.KeepAspectRatio)
             self.previewLabel.setPixmap(pixmap)
+            self.selectedChanged.emit('mask', self.currentMask.name)
 
-    def save_button_clicked(self):
+    def save_current(self):
         if not self.currentMask and not self.maskList:
             QtWidgets.QMessageBox.warning(self, '提示', '请先选择一个mask')
             return
@@ -58,19 +71,30 @@ class MaskWidget(QtWidgets.QWidget, Ui_Form):
             print('add new mask')
         else:  # 修改, TODO
             pass
-        self.savePatternSignal.emit()
+        # self.savePatternSignal.emit()
 
     def update_listwidget(self):
         self.listWidget.clear()
-        for i in range(len(self.maskList)):
-            self.listWidget.addItem('mask_{}'.format(i+1))
+        # for i in range(len(self.maskList)):
+        #     self.listWidget.addItem('mask_{}'.format(i+1))
+        for mask in self.maskList:
+            self.listWidget.addItem(mask.name)
         if self.maskList:
             self.listWidget.setCurrentRow(0)  # 显示第一个mask
             self.threshSlider.setValue(self.maskList[0].binaryThreshold)
             # self.item_changed(0)  # 显示第一个mask
+            # self.selectedChanged.emit('mask', self.currentMask.name)
 
     def item_changed(self, rowIndex):
         self.currentMask = self.maskList[rowIndex]
         pixmap = self.currentMask.pixmap
         pixmap = pixmap.scaled(self.previewLabel.size(), QtCore.Qt.KeepAspectRatio)
         self.previewLabel.setPixmap(pixmap)
+        self.selectedChanged.emit('mask', self.currentMask.name)
+
+    def set_current_mask_by_name(self, name):
+        for i, mask in enumerate(self.maskList):
+            if mask.name == name:
+                # self.listWidget.setCurrentIndex(i)
+                self.listWidget.setCurrentRow(i)
+                return

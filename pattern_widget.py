@@ -9,12 +9,15 @@ from PyQt5.QtWidgets import QFileDialog
 import cv2
 
 import utils
+from template import Template
 from mask import Mask
+from part import Part
 from shape import Shape
 from canvas import Canvas
 from pattern import Pattern
-from ui.pcb_location import PCBLocationWidget
 from ui.pattern_info import PatternInfoWidget
+from ui.pcb_location import PCBLocationWidget
+from ui.template_widget import TemplateWidget
 from ui.mask_widget import MaskWidget
 
 
@@ -41,7 +44,8 @@ class PatternWidget(QtWidgets.QWidget):
         self.cursorAction = new_action('./icon/cursor-50.png', '选择')
         self.moveAction = new_action('./icon/hand-50.png', '移动')
 
-        self.pcbLocationAction = new_action('./icon/green-flag-50.png', 'PCB定位')
+        self.pcbLocationAction = new_action('./icon/green-flag-50.png', 'PCB选取')
+        self.templateAction = new_action('./icon/green-flag-50.png', '模板定位')
         self.maskAction = new_action('./icon/mask-50.png', 'Mask')
 
         self.capacitorAction = new_action('./icon/capacitor.png', '电解电容')
@@ -51,10 +55,10 @@ class PatternWidget(QtWidgets.QWidget):
 
         self.homeAction = new_action('./icon/home-50.png', '检测界面')
 
-        # self.capacitorAction.triggered.connect(self.draw_location)
         self.cursorAction.triggered.connect(self.cursor_action)
-        self.pcbLocationAction.triggered.connect(self.pcb_location_action)
-        self.maskAction.triggered.connect(self.draw_mask_action)
+        self.pcbLocationAction.triggered.connect(self.mode_change_by_action)
+        self.templateAction.triggered.connect(self.mode_change_by_action)
+        self.maskAction.triggered.connect(self.mode_change_by_action)
         self.createAction.triggered.connect(self.create_pattern)
         self.openAction.triggered.connect(self.load_pattern)
 
@@ -66,8 +70,8 @@ class PatternWidget(QtWidgets.QWidget):
         self.toolbar.addActions(
             [self.captureAction, self.zoomInAction, self.zoomOutAction, self.cursorAction, self.moveAction])
         self.toolbar.addSeparator()
-        self.toolbar.addActions([self.pcbLocationAction, self.maskAction, self.capacitorAction, self.resistorAction,
-                                 self.slotAction, self.componentAction])
+        self.toolbar.addActions([self.pcbLocationAction, self.templateAction, self.maskAction, self.capacitorAction, 
+                                 self.resistorAction, self.slotAction, self.componentAction])
         self.toolbar.addSeparator()
         self.toolbar.addActions([self.homeAction])
         self.toolbar.setIconSize(QtCore.QSize(32, 32))
@@ -87,32 +91,41 @@ class PatternWidget(QtWidgets.QWidget):
         self.zoomValue = 100.0  # 缩放尺度，100为原始尺寸
         self.canvas.zoomRequest.connect(self.zoomRequest)
         self.canvas.scrollRequest.connect(self.scrollRequest)
-        # self.canvas.newShape.connect(self.new_shape)
+        self.canvas.newShape.connect(self.new_shape)
         self.canvas.selectionChanged.connect(self.shapeSelectionChanged)
+        self.canvas.deleteShape.connect(self.delete_shape)
+
 
         # TODO:canvas右键弹出菜单内容设定
-        actions_1 = [self.zoomInAction, self.zoomOutAction, self.captureAction]
-        actions_2 = [self.captureAction]
-        utils.addActions(self.canvas.menus[0], actions_1)
-        utils.addActions(self.canvas.menus[1], actions_2)
+        # actions_1 = [self.zoomInAction, self.zoomOutAction, self.captureAction]
+        # actions_2 = [self.captureAction]
+        # utils.addActions(self.canvas.menus[0], actions_1)
+        # utils.addActions(self.canvas.menus[1], actions_2)
 
         # right top view: TODO
         # 第一页：程式信息页
         self.patternInfoWidget = PatternInfoWidget()
         # 第二页：定位信息页
         self.locationWidget = PCBLocationWidget()
-        self.locationWidget.getPCBSignal.connect(self.get_pcb_action)
-        self.locationWidget.getImageSignal.connect(self.get_template_action)
+        # self.locationWidget.getPCBSignal.connect(self.get_pcb_action)
+        # self.locationWidget.getImageSignal.connect(self.get_template_action)
         self.locationWidget.savePCBLocationInfomation.connect(self.save_pcb_base_infomation)
-        self.locationWidget.saveTemplateInfomation.connect(self.save_template_information)
-        # 第三页：Mask页
+        # self.locationWidget.saveTemplateInfomation.connect(self.save_template_information)
+        # 第三页：模板定位页
+        self.templateWidget = TemplateWidget()
+        # self.templateWidget.newTemplateShape.connect(self.new_shape)
+        self.templateWidget.savePatternSignal.connect(self.save_pattern)
+        self.templateWidget.selectedChanged.connect(self.selected_item_changed_from_widget)
+        # 第四页：Mask页
         self.maskWidget = MaskWidget()
-        self.maskWidget.getMaskSignal.connect(self.get_mask_action)
+        # self.maskWidget.getMaskSignal.connect(self.get_mask_action)
         self.maskWidget.savePatternSignal.connect(self.save_pattern)
+        self.maskWidget.selectedChanged.connect(self.selected_item_changed_from_widget)
 
         self.rightTopArea = QtWidgets.QTabWidget()
         self.rightTopArea.addTab(self.patternInfoWidget, '程式信息')
         self.rightTopArea.addTab(self.locationWidget, '定位信息')
+        self.rightTopArea.addTab(self.templateWidget, '模板信息')
         self.rightTopArea.addTab(self.maskWidget, 'Mask信息')
         self.rightTopArea.setCurrentWidget(self.patternInfoWidget)
         self.rightTopArea.tabBarClicked.connect(self.tabel_widget_tabbar_clicked)
@@ -171,7 +184,7 @@ class PatternWidget(QtWidgets.QWidget):
         # 加载CV数据
         cvImage = cv2.imread(imagefile)
         x, y, w, h = self.pattern.ax_pcbs
-        self.canvas.cvImage = cvImage[y:y+h+1, x:x+w+1, :]
+        self.canvas.cvImage = cvImage[y:y+h, x:x+w, :].copy()
 
         # 加载pixmap，并显示
         orgPixmap = QtGui.QPixmap(imagefile)
@@ -182,46 +195,163 @@ class PatternWidget(QtWidgets.QWidget):
 
         shapes = []
 
-        # 模板加载，PCB截图加载
+        # PCB截图加载
         self.locationWidget.set_pixmap(self.locationWidget.pcbLabel, pixmap)
-        for i in [0, 1]:
-            if not self.pattern.ax_templates:
-                continue
-            x, y, w, h = self.pattern.ax_templates[i]
-            widget = self.locationWidget.templateLabel_1 if i == 0 else self.locationWidget.templateLabel_2
-            rectangle = QtCore.QRect(x, y, w, h)
-            pixmap = orgPixmap.copy(rectangle)
-            self.locationWidget.set_pixmap(widget, pixmap)
+        
+        # 模板加载
+        for i, template in enumerate(self.pattern.templates):
+            template.load_image(cvImage)
+            x, y, w, h = template.x, template.y, template.w, template.h
 
             # load shapes
-            shape = Shape(shape_type='location')
+            shape = Shape(name=template.name, shape_type='template')
             p1 = QtCore.QPoint(x, y)
             p2 = QtCore.QPoint(x+w, y+h)
             shape.points.extend([p1, p2])
             shapes.append(shape)
 
+            # init template widget
+            self.templateWidget.templateList.append(template)
+
+
         # 加载Mask
         self.maskWidget.maskList.clear()
         for mask in self.pattern.masks:
+            mask.load_image(cvImage)
             x, y ,w, h = mask.x, mask.y, mask.w, mask.h
-            shape = Shape(shape_type='mask')
+
+            shape = Shape(name=mask.name, shape_type='mask')
             p1 = QtCore.QPoint(x, y)
             p2 = QtCore.QPoint(x+w, y+h)
             shape.points.extend([p1, p2])
             shapes.append(shape)
 
             # init mask widget
-            mask.load_image(cvImage)
             self.maskWidget.maskList.append(mask)
         
-        self.maskWidget.update_listwidget()
-
         self.canvas.loadShapes(shapes)
         self.canvas.update()
+
+        # 更新界面显示
+        self.templateWidget.update_listwidget()
+        self.maskWidget.update_listwidget()
+
 
         # enable all tabs
         for idx in range(self.rightTopArea.count()):
             self.rightTopArea.setTabEnabled(idx, True)
+
+    def new_shape(self, classes=''):
+        ''' 新增形状，classes为: template,mask,part; name为列表显示的名称'''
+        # type2class = {'template': Template, 'mask': Mask, 'part': Part}
+        try:
+            x, y, w, h, cvImage, pixmap = self.get_roi_image()
+        except Exception as e:
+            QtWidgets.QMessageBox.warning(self, '警告', str(e))
+            return
+        
+        # 获取唯一的name
+        name = self.pattern.new_name(classes)
+        # 更新canvas中对应shape的name
+        self.canvas.shapes[-1].name = name
+        # canvas变为编辑模式
+        self.canvas.setEditing(True)
+
+        if classes == 'location':
+            self.pattern.set_pcb_coordinate(x, y, w, h)
+            self.pattern.originCVImage = self.canvas.cvImage.copy()  # 设置图片
+            self.locationWidget.set_pixmap(self.locationWidget.pcbLabel, pixmap)
+        elif classes == 'template':
+            template = Template(x, y, w, h, name)
+            template.load_image(self.canvas.cvImage)
+            self.pattern.templates.append(template)
+            # 更新界面数据
+            self.templateWidget.set_template(template)
+            self.templateWidget.save_current()
+        elif classes == 'mask':
+            mask = Mask(x, y, w, h, name)
+            mask.load_image(self.canvas.cvImage)
+            self.pattern.masks.append(mask)
+            self.maskWidget.set_mask(mask)
+            self.maskWidget.save_current()
+        elif classes == 'part':
+            part = Part(x, y, w, h, name)
+            part.load_image(self.canvas, cvImage)
+            self.pattern.parts.append(part)
+            # 更新界面数据，TODO
+        else:
+            raise Exception('类型不匹配: ' + classes)
+
+    def delete_shape(self, classes='', name=''):
+        ''' 删除形状,classes为: template,mask,part; name为列表显示的名称 '''
+        if not self.pattern:
+            return
+
+        if classes == 'template':
+            itemList = self.pattern.templates
+            widget = self.templateWidget
+        elif classes == 'mask':
+            itemList = self.pattern.masks
+            widget = self.maskWidget
+        elif classes == 'part':
+            itemList = self.pattern.parts
+            # widget = self.partWidget
+        else:
+            raise Exception('类型不匹配')
+
+        index = [x.name for x in itemList].index(name)
+        # pattern中数据删除
+        itemList.pop(index)
+        # 更新界面
+        widget.delete_by_name(name)
+
+    def change_shape_coordinate(self, classes='', name=''):
+        ''' 拖动形状导致坐标或者大小变换后触发，更新pattern参数及界面显示 '''
+        if not self.pattern:
+            return
+        # step1: get coordinate
+        # step2: update pattern
+        # step3: update widget by name
+
+    def change_shape_parameter(self, classes='', name=''):
+        ''' 界面中更改相关参数后触发 '''
+        if not self.pattern:
+            return
+        # step1: get parameter
+        # step2: update pattern
+
+    def seleted_shape_changed_from_canvas(self, shapes):
+        if not shapes:
+            return
+        shape = shapes[0]
+        if shape.shape_type == 'template':
+            self.templateWidget.set_current_template_by_name(shape.name)
+        elif shape.shape_type == 'mask':
+            self.maskWidget.set_current_mask_by_name(shape.name)
+        else:  # TODO
+            pass
+
+    def selected_item_changed_from_widget(self, classes, name):
+        ''' 界面中选中某个项，canvas中需要高亮此项 '''
+        for shape in self.canvas.shapes:
+            if shape.shape_type == classes and shape.name == name:
+                # print('seleted: ', name)
+                if self.canvas.hShape:
+                    self.canvas.hShape.selected = False
+                    self.canvas.hShape.highlightClear()
+                shape.selected = True
+                self.canvas.hShape = shape
+                self.canvas.update()
+                break
+
+    def has_pattern_and_pixmap(self):
+        if not hasattr(self, 'pattern') or not self.pattern.folder:
+            QtWidgets.QMessageBox.information(self, '提示', '请先创建或者载入程式')
+            return False
+        if not self.canvas.pixmap:
+            QtWidgets.QMessageBox.information(self, '提示', '请先抓取图片')
+            return False
+        return True
 
     def show_pattern_info(self):
         if not hasattr(self, 'pattern'):
@@ -230,42 +360,40 @@ class PatternWidget(QtWidgets.QWidget):
         self.rightTopArea.setCurrentWidget(self.patternInfoWidget)
         self.patternInfoWidget.show_pattern_info(self.pattern.folder)
 
-    def pcb_location_action(self):
-        ''' PCB定位按钮响应函数 '''
-        if not hasattr(self, 'pattern') or not self.pattern.folder:
-            QtWidgets.QMessageBox.information(self, '提示', '请先创建或者载入程式')
-            return
-        if not self.canvas.pixmap:
-            # print('not self.canvas.pixmap ')
-            QtWidgets.QMessageBox.information(self, '提示', '请先抓取图片')
-            return
-        self.draw_location()
-        self.canvas.update()
-        self.rightTopArea.setTabEnabled(1, True)
-        self.rightTopArea.setCurrentWidget(self.locationWidget)
-
-    def draw_mask_action(self):
-        if not hasattr(self, 'pattern') or not self.pattern.folder:
-            QtWidgets.QMessageBox.information(self, '提示', '请先创建或者载入程式')
-            return
-        if not self.canvas.pixmap:
-            # print('not self.canvas.pixmap ')
-            QtWidgets.QMessageBox.information(self, '提示', '请先抓取图片')
-            return
-        self.canvas.setEditing(False)
-        self.canvas.createMode = 'mask'
-        self.canvas.update()
-        self.rightTopArea.setTabEnabled(2, True)
-        self.rightTopArea.setCurrentWidget(self.maskWidget)
-
     def tabel_widget_tabbar_clicked(self, index):
         ''' 右上角tabwidget页面点击 '''
         if index == 1:  # PCB定位页面
-            self.pcb_location_action()
+            self.canvas.createMode = 'location'
             self.locationWidget.update_pixmap_show()
-        elif index == 2:  # mask页面
-            self.draw_mask_action()
+        elif index == 2:  # template页面
+            self.canvas.createMode = 'template'
+            self.templateWidget.update_pixmap_show()
+        elif index == 3:  # mask页面
+            self.canvas.createMode = 'mask'
             self.maskWidget.update_pixmap_show()
+        # 点击页面标签后，进入编辑模式
+        self.canvas.setEditing(True)
+        self.canvas.update()
+
+    def mode_change_by_action(self):
+        if not self.has_pattern_and_pixmap():
+            return
+        action = self.sender()
+        if action == self.pcbLocationAction:
+            self.canvas.createMode = 'location'
+            self.rightTopArea.setTabEnabled(1, True)
+            self.rightTopArea.setCurrentWidget(self.locationWidget)
+        elif action == self.templateAction:
+            self.canvas.createMode = 'template'
+            self.rightTopArea.setTabEnabled(2, True)
+            self.rightTopArea.setCurrentWidget(self.templateWidget)
+        elif action == self.maskAction:
+            self.canvas.createMode = 'mask'
+            self.rightTopArea.setTabEnabled(3, True)
+            self.rightTopArea.setCurrentWidget(self.maskWidget)
+        
+        self.canvas.setEditing(False)
+        self.canvas.update()
 
     def save_pcb_base_infomation(self):
         if not hasattr(self, 'pattern'):
@@ -276,69 +404,29 @@ class PatternWidget(QtWidgets.QWidget):
         x, y, w, h = self.pattern.ax_pcbs
         rectangle = QtCore.QRect(x, y, w, h)
         pixmap = self.canvas.pixmap.copy(rectangle)
-        self.canvas.cvImage = self.canvas.cvImage[y:y+h+1, x:x+w+1, :]
+        self.canvas.cvImage = self.canvas.cvImage[y:y+h, x:x+w, :].copy()
         self.canvas.loadPixmap(pixmap)
         self.canvas.update()
         # 保存程式基础信息
         self.pattern.save()
 
-    def save_template_information(self):
-        if not hasattr(self, 'pattern'):
-            return
-        if not self.pattern.ax_pcbs:
-            QtWidgets.QMessageBox.information(self, '提示', '请先获取PCB板')
-            return
-        # if not any(self.pattern.ax_templates):
-        if self.locationWidget.template_1 is None and self.locationWidget.template_2 is None:
-            QtWidgets.QMessageBox.information(self, '提示', '请先获取模板')
-            return
-        # 保存程式基础信息
-        self.save_pattern()
-
     def get_roi_image(self):
         ''' 获取模板或者PCB的相应函数。该函数截取用户绘制的区域，并显示在相应的widget中。
             此外，本函数还负责保存截取区域的坐标参数，作为程式的基础信息并保存 '''
         if not self.canvas.pixmap:
-            return
+            raise Exception('请先获取图像')
         if not hasattr(self, 'pattern'):
-            return
-        shapeList = self.canvas.modeToShapeList[self.canvas.createMode]
-        if not shapeList:
-            return
-        shape = shapeList[-1]
+            raise Exception('请先创建程式')
+        # shapeList = self.canvas.modeToShapeList[self.canvas.createMode]
+        shape = self.canvas.shapes[-1]
         if len(shape.points) != 2:
-            return
+            raise Exception('请先获取一个形状')
         rectangle = shape.getRectFromLine(*shape.points).toRect()
         # 保存坐标信息
         x, y, w, h = rectangle.x(), rectangle.y(), rectangle.width(), rectangle.height()
-        cvImage = self.canvas.cvImage[y:y+h+1, x:x+w+1, :]
+        cvImage = self.canvas.cvImage[y:y+h, x:x+w, :].copy()
         pixmap = self.canvas.pixmap.copy(rectangle)
         return x, y, w, h, cvImage, pixmap
-
-        # if widget == self.locationWidget.pcbLabel:
-        #     self.pattern.set_pcb_coordinate(x, y, w, h)
-        #     self.pattern.originCVImage = self.canvas.cvImage.copy()  # 设置图片
-
-        # self.sender().set_pixmap(widget, pixmap)
-
-    def get_pcb_action(self):
-        ''' 获取选中的PCB板 '''
-        x, y, w, h, cvImage, pixmap = self.get_roi_image()
-        self.pattern.set_pcb_coordinate(x, y, w, h)
-        self.pattern.originCVImage = self.canvas.cvImage.copy()  # 设置图片
-        self.locationWidget.set_pixmap(self.locationWidget.pcbLabel, pixmap)
-
-    def get_template_action(self, widget):
-        ''' 获取选中的模板 '''
-        x, y, w, h, cvImage, pixmap = self.get_roi_image()
-        self.locationWidget.set_pixmap(widget, pixmap)
-
-    def get_mask_action(self):
-        ''' 获取选中的Mask '''
-        x, y, w, h, cvImage, pixmap = self.get_roi_image()
-        mask = Mask(x, y, w, h)
-        mask.load_image(self.canvas.cvImage)
-        self.maskWidget.set_mask(mask)
 
     def save_pattern(self):
         ''' 保存pattern信息；位置信息均来自canvas里面的shapes '''
@@ -347,51 +435,21 @@ class PatternWidget(QtWidgets.QWidget):
         if not self.pattern.ax_pcbs:
             print('error: location pcb first')
             return
-        # 1. save template
-        self.pattern.ax_templates.clear()
-        for shape in self.canvas.locationShapes:
-            rect = shape.getRectFromLine(*shape.points).toRect()
-            x, y, w, h = rect.x(), rect.y(), rect.width(), rect.height()
-            self.pattern.ax_templates.append([x, y, w, h])
-        # 2. save mask
-        self.pattern.masks.clear()
-        for shape in self.canvas.maskShapes:
-            rect = shape.getRectFromLine(*shape.points).toRect()
-            x, y, w, h = rect.x(), rect.y(), rect.width(), rect.height()
-            mask = Mask(x, y, w, h)
-            self.pattern.masks.append(mask)
-        # 3. save parts: TODO
-
         self.pattern.save()
 
     # React to canvas signals.
     def shapeSelectionChanged(self, selected_shapes):
-        self._noSelectionSlot = True
         for shape in self.canvas.selectedShapes:
             shape.selected = False
         # self.labelList.clearSelection()
         self.canvas.selectedShapes = selected_shapes
         for shape in self.canvas.selectedShapes:
             shape.selected = True
-            # item = self.labelList.findItemByShape(shape)
-            # self.labelList.selectItem(item)
-            # self.labelList.scrollToItem(item)
-        self._noSelectionSlot = False
-        n_selected = len(selected_shapes)
-        # self.actions.delete.setEnabled(n_selected)
-        # self.actions.copy.setEnabled(n_selected)
-        # self.actions.edit.setEnabled(n_selected == 1)
-
-    # def new_shape(self):
-    #     # self.canvas.setLastLabel('a', {})
-    #     pass
+        # 更新tabwidget中的显示
+        self.seleted_shape_changed_from_canvas(selected_shapes)
 
     def cursor_action(self):
         self.canvas.setEditing(True)
-
-    def draw_location(self):
-        self.canvas.setEditing(False)
-        self.canvas.createMode = 'location'
 
     def scrollRequest(self, delta, orientation):
         units = - delta * 0.1  # natural scroll
