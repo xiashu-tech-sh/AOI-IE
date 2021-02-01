@@ -1,15 +1,11 @@
-import os
-from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5 import QtCore, QtWidgets
 from mask_widget_ui import Ui_Form
-from mask import Mask
 
 
 class MaskWidget(QtWidgets.QWidget, Ui_Form):
-
-    # getMaskSignal = QtCore.pyqtSignal(QtWidgets.QLabel, name='getMaskSignal')  # 获取模板信号，参数为需要显示的控件
-    # newMaskShape = QtCore.pyqtSignal(str, str, name='newMaskShape')  # 请求创建新的mask
     savePatternSignal = QtCore.pyqtSignal(name='savePatternSignal')  # 保存pattern
     selectedChanged = QtCore.pyqtSignal(str, str, name='selectedChanged')
+    parameterChanged = QtCore.pyqtSignal(name='parameterChanged')  # 任何程式相关的参数变化后都必须触发该信号告知父类pattern已被修改
 
     def __init__(self):
         ''' Maks页面 '''
@@ -25,8 +21,19 @@ class MaskWidget(QtWidgets.QWidget, Ui_Form):
         self.saveButton.clicked.connect(self.savePatternSignal)
         self.listWidget.currentRowChanged.connect(self.item_changed)
 
-    # def get_circle_button_clicked(self):
-        # self.getMaskSignal.emit(self.previewLabel)
+    def right_click_add(self):
+        self.Pcanvase.menus = (QtWidgets.QMenu(), QtWidgets.QMenu())
+
+        self.copyShapeAction = QtWidgets.QAction('复制Mask')
+        self.pasteShapeAction = QtWidgets.QAction('粘贴Mask')
+        self.delShapeAction = QtWidgets.QAction('删除Mask')
+        # self.delShapeAction = QtWidgets.QAction('复制Mask')
+        self.delShapeAction.triggered.connect(self.Pcanvase.delete_shape_action_clicked)
+        self.copyShapeAction.triggered.connect(self.Pcanvase.copy_shape_action_clicke)
+        self.pasteShapeAction.triggered.connect(self.Pcanvase.paste_shape_action_clicke)
+        self.Pcanvase.menus[1].addAction(self.copyShapeAction)
+        self.Pcanvase.menus[1].addAction(self.pasteShapeAction)
+        self.Pcanvase.menus[1].addAction(self.delShapeAction)
 
     def set_mask(self, mask):
         self.currentMask = mask
@@ -42,7 +49,8 @@ class MaskWidget(QtWidgets.QWidget, Ui_Form):
                 break
         if index >= 0:
             self.maskList.pop(index)
-            self.listWidget.takeItem(index)  # remove row from qlistwidget
+            # self.listWidget.takeItem(index)  # remove row from qlistwidget
+            self.update_listwidget()
 
     def threshold_changed(self, value):
         ''' 拖动slider后的响应函数，更新图片显示 '''
@@ -51,6 +59,7 @@ class MaskWidget(QtWidgets.QWidget, Ui_Form):
         pixmap = self.currentMask.binary_threshold_changed(value)
         pixmap = pixmap.scaled(self.previewLabel.size(), QtCore.Qt.KeepAspectRatio)
         self.previewLabel.setPixmap(pixmap)
+        self.parameterChanged.emit()
 
     def update_pixmap_show(self):
         if self.currentMask:
@@ -67,11 +76,15 @@ class MaskWidget(QtWidgets.QWidget, Ui_Form):
             self.currentMask = None
             self.update_listwidget()
             count = self.listWidget.count()
-            self.listWidget.setCurrentRow(count-1)
-            print('add new mask')
+            self.listWidget.setCurrentRow(count - 1)
+            # print('add new mask')
         else:  # 修改, TODO
             pass
-        # self.savePatternSignal.emit()
+            # self.savePatternSignal.emit()
+
+    def paste_by_name(self, new_part):
+        self.maskList.append(new_part)
+        self.update_listwidget()
 
     def update_listwidget(self):
         self.listWidget.clear()

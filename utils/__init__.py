@@ -23,3 +23,15 @@ from .qt import struct
 from .qt import distance
 from .qt import distancetoline
 from .qt import fmtShortcut
+
+
+import cv2
+import numpy as np
+
+def cv_imread(filename):
+    return cv2.imdecode(np.fromfile(filename, dtype=np.uint8), cv2.IMREAD_COLOR)
+
+
+def cv_imwrite(filename, image):
+    param = [int(cv2.IMWRITE_JPEG_QUALITY), 100]
+    cv2.imencode('.jpg', image, param)[1].tofile(filename)

@@ -29,6 +29,7 @@ class PCBLocationWidget(QtWidgets.QWidget, Ui_Form):
         pixmap = pixmap.scaled(widget.size(), QtCore.Qt.KeepAspectRatio)
         widget.setPixmap(pixmap)
 
+
     def update_pixmap_show(self):
         if self.pcbImage:
             pixmap = self.pcbImage.scaled(self.pcbLabel.size(), QtCore.Qt.KeepAspectRatio)

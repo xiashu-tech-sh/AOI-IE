@@ -3,25 +3,24 @@ import math
 
 from qtpy import QtCore
 from qtpy import QtGui
-
+from PyQt5.QtCore import QPointF, Qt
+from PyQt5.QtGui import QBrush
 import utils
-
 
 # TODO(unknown):
 # - [opt] Store paths instead of creating new ones at each paint.
 
 
 R, G, B = SHAPE_COLOR = 0, 255, 0  # green
-DEFAULT_LINE_COLOR = QtGui.QColor(R, G, B, 128)                # bf hovering
-DEFAULT_FILL_COLOR = QtGui.QColor(R, G, B, 128)                # hovering
-DEFAULT_SELECT_LINE_COLOR = QtGui.QColor(255, 255, 255)        # selected
-DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(R, G, B, 155)         # selected
-DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(R, G, B, 255)         # hovering
+DEFAULT_LINE_COLOR = QtGui.QColor(R, G, B, 128)  # bf hovering
+DEFAULT_FILL_COLOR = QtGui.QColor(R, G, B, 128)  # hovering
+DEFAULT_SELECT_LINE_COLOR = QtGui.QColor(255, 255, 255)  # selected
+DEFAULT_SELECT_FILL_COLOR = QtGui.QColor(R, G, B, 155)  # selected
+DEFAULT_VERTEX_FILL_COLOR = QtGui.QColor(R, G, B, 255)  # hovering
 DEFAULT_HVERTEX_FILL_COLOR = QtGui.QColor(255, 255, 255, 255)  # hovering
 
 
 class Shape(object):
-
     P_SQUARE, P_ROUND = 0, 1
 
     MOVE_VERTEX, NEAR_VERTEX = 0, 1
@@ -37,17 +36,15 @@ class Shape(object):
     point_size = 8
     scale = 1.0
 
-    def __init__(self, name='', data_obj=None, line_color=None, shape_type=None,
-                 flags=None, group_id=None):
-        # self.data_obj = data_obj  # 传入pattern中具有坐标元素的对象的引用，如mask，template，part等对象，这些对象必须有x,y,w,h参数
+    def __init__(self, name='', data_obj=None, line_color=None, shape_type=None, part_type=''):
         self.name = name
-        self.group_id = group_id
+        # self.group_id = group_id
         self.points = []
         self.fill = False
         self.selected = False
         self.shape_type = shape_type
-        self.flags = flags
-        self.other_data = {}
+        self.part_type = ''  # 元器件类型：'capacitor', 'resistor', 'slot', 'component'
+        # self.flags = flags
 
         self._highlightIndex = None
         self._highlightMode = self.NEAR_VERTEX
@@ -55,8 +52,6 @@ class Shape(object):
             self.NEAR_VERTEX: (4, self.P_ROUND),
             self.MOVE_VERTEX: (1.5, self.P_SQUARE),
         }
-
-        # self._closed = False
 
         if line_color is not None:
             # Override the class line_color attribute
@@ -66,13 +61,6 @@ class Shape(object):
 
         self.shape_type = shape_type
 
-        # 如果data_obj有数据，则获取其坐标
-        # if data_obj:
-        #     x, y, w, h = data_obj.x, data_obj.y, data_obj.w, data_obj.h
-        #     p1 = QtCore.QPoint(x, y)
-        #     p2 = QtCore.QPoint(x+w, y+h)
-        #     self.points.extend([p1, p2])
-
     @property
     def shape_type(self):
         return self._shape_type
@@ -81,23 +69,15 @@ class Shape(object):
     def shape_type(self, value):
         if value is None:
             raise ValueError('必须设定一个shape type')
-        if value not in ['location', 'template', 'mask', 'capacitor', 'resistor', 'slot', 'component']:
+        if value not in ['location', 'template', 'mask', 'part', 'pos_neg']:
             raise ValueError('Unexpected shape_type: {}'.format(value))
         self._shape_type = value
 
-    # def close(self):
-    #     self._closed = True
-
     def addPoint(self, point):
         if self.points and point == self.points[0]:
-            # self.close()
             pass
         else:
             self.points.append(point)
-
-    def canAddPoint(self):
-        # return self.shape_type in ['polygon', 'linestrip']
-        return False
 
     def popPoint(self):
         if self.points:
@@ -109,12 +89,6 @@ class Shape(object):
 
     def removePoint(self, i):
         self.points.pop(i)
-
-    # def isClosed(self):
-    #     return self._closed
-
-    # def setOpen(self):
-    #     self._closed = False
 
     def getRectFromLine(self, pt1, pt2):
         x1, y1 = pt1.x(), pt1.y()
@@ -138,15 +112,7 @@ class Shape(object):
             if len(self.points) == 2:
                 rectangle = self.getRectFromLine(*self.points)
                 line_path.addRect(rectangle)
-                # zp add, 多加一条竖线
-                # xx = self.points[0].x()
-                # yy1 = self.points[0].y()
-                # yy2 = self.points[1].y()
-                # start = QtCore.QPointF(xx+20, yy1)
-                # end = QtCore.QPointF(xx+20, yy2)
-                # line_path.moveTo(start)
-                # line_path.lineTo(end)
-                
+
             for i in range(len(self.points)):
                 self.drawVertex(vrtx_path, i)
 
@@ -211,20 +177,10 @@ class Shape(object):
         return rectangle
 
     def makePath(self):
-        # if self.shape_type == 'rectangle':
         path = QtGui.QPainterPath()
         if len(self.points) == 2:
             rectangle = self.getRectFromLine(*self.points)
             path.addRect(rectangle)
-        # elif self.shape_type == "circle":
-        #     path = QtGui.QPainterPath()
-        #     if len(self.points) == 2:
-        #         rectangle = self.getCircleRectFromLine(self.points)
-        #         path.addEllipse(rectangle)
-        # else:
-        #     path = QtGui.QPainterPath(self.points[0])
-        #     for p in self.points[1:]:
-        #         path.lineTo(p)
         return path
 
     def boundingRect(self):

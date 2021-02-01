@@ -1,11 +1,7 @@
 ''' 程式定义文件。
     程式是人工制作的PCB板错漏反检测的基础数据，其实体是一个文件夹，该文件夹中包含了以下内容：
     1. image.jpg： 建立程式时候采集的原始图片
-    2. template_1.jpg: 模板1的图片（若有）
-    3. template_2.jpg: 模板2的图片（若有）
-    4. mask_1.jpg: Mask图片（若有）
-    5. mask_2.jpg: Mask图片（若有）
-    6. info.json： 检测参数文件，包含PCB板ROI坐标、模板坐标、Mask坐标；
+    2. info.json： 检测参数文件，包含PCB板ROI坐标、模板坐标、Mask坐标；
        及元器件序号、类别、坐标、检查项、阈值等信息
 '''
 
@@ -20,6 +16,7 @@ from template import Template
 from mask import Mask
 from part import Part, MISSING, MISMATCH, REVERSE
 import algorithm as alg
+from utils import cv_imread, cv_imwrite
 
 
 class Pattern:
@@ -32,9 +29,10 @@ class Pattern:
         self.pcbCVImage = None  # 根据PCB坐标裁剪出来的图片
         
         self.ax_pcbs = []  # PCB_ROI坐标集，格式 [x, y, w, h]
-        self.templates = []  # 模板坐标集，格式 [[x, y, w, h]]
-        self.masks = []  # Mask坐标集，格式 [[x, y, w, h]], 注意：Mask坐标是相对于PCB_ROI的坐标
+        self.templates = []  # 模板
+        self.masks = []  # Mask, 注意：Mask坐标是相对于PCB_ROI的坐标
         self.parts = []
+        self.template = None # 模板坐标
 
         self.dirty = False  # pattern修改后变成True
 
@@ -50,8 +48,8 @@ class Pattern:
             shapeList = self.templates
         elif classes == 'mask':
             shapeList = self.masks
-        elif classes == 'capacitor':
-            pass
+        elif classes == 'part':
+            shapeList = self.parts
         # TODO
         exists = [x.name for x in shapeList]
         for i in range(len(exists)+1):
@@ -65,7 +63,8 @@ class Pattern:
             'ax_pcbs': self.ax_pcbs,
             'templates': [],
             'masks': [],
-            'parts': []})
+            'parts': [],
+            })
         for template in self.templates:
             data['templates'].append(template.to_json())
         for mask in self.masks:
@@ -80,7 +79,7 @@ class Pattern:
             return
         # save origin cv image
         imagefile = os.path.join(self.folder, 'image.jpg')
-        cv2.imwrite(imagefile, self.originCVImage)
+        cv_imwrite(imagefile, self.originCVImage)
         # save parameter
         infofile = os.path.join(self.folder, 'info.json')
         with open(infofile, 'w', encoding='utf-8') as f:
@@ -115,33 +114,16 @@ class Pattern:
         for part in jsondata['parts']:
             self.parts.append(Part.from_json(part))
 
+
         # load image
-        self.originCVImage = cv2.imread(imagefile)
+        self.originCVImage = cv_imread(imagefile)
         if self.ax_pcbs:
             x, y, w, h = self.ax_pcbs
             self.pcbCVImage = self.originCVImage[y:y+h, x:x+w, :].copy()
 
-
-    # @staticmethod
-    # def from_json(jsondata):
-    #     obj = Pattern(folder=jsondata['folder'])
-    #     obj.ax_pcbs = list(jsondata['ax_pcbs'])
-    #     obj.ax_templates = list(jsondata['ax_templates'])
-    #     # obj.masks = list(jsondata['masks'])
-    #     for mask in jsondata['masks']:
-    #         obj.masks.append(Mask.from_json(mask))
-    #     for part in jsondata['parts']:
-    #         obj.parts.append(Part.from_json(part))
-    #     return obj
-
     @staticmethod
     def from_folder(folder):
         ''' 从文件重建类 '''
-        # filename = os.path.join(folder, 'info.json')
-        # assert os.path.exists(filename), '文件不存在: {}'.format(filename)
-        # with open(filename, 'r', encoding='utf-8') as f:
-        #     data = json.load(f)
-        # return Pattern.from_json(data)
         obj = Pattern(folder=folder)
         obj.load(folder)
         return obj

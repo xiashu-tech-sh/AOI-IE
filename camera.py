@@ -7,7 +7,7 @@ from MvImport.MvCameraControl_class import *
 from ctypes import *
 from PyQt5 import QtCore, QtGui
 import cv2
-import imageio
+# import imageio
 
 
 class CameraError(Exception):
@@ -125,7 +125,7 @@ class CameraObj:
                 break
         # 获取到图像的时间开始节点获取到图像的时间开始节点
         self.st_frame_info = stFrameInfo
-        img_buff = (c_ubyte * (self.st_frame_info.nWidth * self.st_frame_info.nHeight * 3 + 2048))()
+        img_buff = (c_ubyte * (self.st_frame_info.nWidth * self.st_frame_info.nHeight * 3 + 2048)*3)()
         stParam = MV_SAVE_IMAGE_PARAM_EX()
         stParam.nWidth = self.st_frame_info.nWidth  # ch:相机对应的宽 | en:Width
         stParam.nHeight = self.st_frame_info.nHeight  # ch:相机对应的高 | en:Height
@@ -140,9 +140,9 @@ class CameraObj:
         stConvertParam.pSrcData = self.bufCache
         stConvertParam.nSrcDataLen = self.st_frame_info.nFrameLen
         stConvertParam.enSrcPixelType = self.st_frame_info.enPixelType
-
+        data = True
         # Mono8直接显示
-        if PixelType_Gvsp_Mono8 == self.st_frame_info.enPixelType:
+        if data:
             numArray = self.mono_numpy(self.bufCache, self.st_frame_info.nWidth, self.st_frame_info.nHeight)
         # RGB直接显示
         elif PixelType_Gvsp_RGB8_Packed == self.st_frame_info.enPixelType:
@@ -162,7 +162,7 @@ class CameraObj:
             numArray = self.mono_numpy(img_buff, self.st_frame_info.nWidth,self.st_frame_info.nHeight)
 
         # 如果是彩色且非RGB则转为RGB后显示
-        elif True == self.is_color_data(self.st_frame_info.enPixelType):
+        elif data is True:
             nConvertSize = self.st_frame_info.nWidth * self.st_frame_info.nHeight * 3
             stConvertParam.enDstPixelType = PixelType_Gvsp_BGR8_Packed
             stConvertParam.pDstBuffer = (c_ubyte * nConvertSize)()
@@ -229,6 +229,8 @@ class CameraObj:
     def release(self):
         ''' 释放相机资源 '''
         self.isOpen = False
+        if self.cam is None:
+            return
         # ch:停止取流 | en:Stop grab image
         ret = self.cam.MV_CC_StopGrabbing()
         if ret != 0:
@@ -304,7 +306,7 @@ class VideoSource(QtCore.QObject):
         self.timer.timeout.connect(self.capture)
         if videofile:
             self.load_video(videofile)
-        
+
     def load_video(self, videofile):
         if not os.path.exists(videofile):
             return
@@ -342,8 +344,8 @@ class VideoSource(QtCore.QObject):
         self.newImageSignal.emit()
         self.currentFrame += 1
         # 循环播放
-        if self.currentFrame == self.nframes:
-            self.currentFrame = 0
+        # if self.currentFrame == self.nframes:
+        #     self.currentFrame = 0
 
     def isRunning(self):
         ''' 为了跟相机线程类(QThread)接口保持一致 '''
@@ -364,23 +366,24 @@ class VideoSource(QtCore.QObject):
 
 
 if __name__ == '__main__':
-    # cam = CameraObj()
+    cam = CameraObj()
     # try:
-    #     cam.connect()
+    cam.connect()
     # except CameraError as e:
     #     print(str(e))
 
-    # print(cam.payloadSize)
+    print(cam.payloadSize)
     
-    # import cv2
-    # img = cam.get_rgb_image()
-    # # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    # print(img.shape)
-    # print(img.dtype)
+    import cv2
+    img = cam.get_rgb_image()
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    print(img.shape)
+    print(img.dtype)
     # img = img[:,:,::-1]
     # cv2.imshow('img', cv2.resize(img, (1000, 600)))
-    # key = cv2.waitKey(0)
-    # cam.release()
+    cv2.imshow('img', cv2.resize(img, (480, 360)))
+    key = cv2.waitKey(0)
+    cam.release()
 
 
     # test video source
@@ -389,11 +392,13 @@ if __name__ == '__main__':
     # videosorce = VideoSource('../JT/test.mp4')
     # sys.exit(app.exec_())
 
+    
+    # read mp4 file
     strPath = '../JT/test.mp4'
     if (os.path.exists(strPath) == False):
         print('file not exist')
     # use imageio to read video file
-    videoReader = imageio.get_reader(strPath)
+    # videoReader = imageio.get_reader(strPath)
     FrameNum = videoReader.get_length()
     print('frame num = ', FrameNum)
     for i in range(0, FrameNum):

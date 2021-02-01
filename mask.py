@@ -17,6 +17,9 @@ class Mask:
         self.binaryImage = None  # cv二值图
         self.binaryThreshold = 100  # 二值化阈值
 
+    def __getitem__(self, index):
+        return [self.x, self.y, self.w, self.h][index]
+
     def binary_threshold_changed(self, threshold):
         ''' 阈值变化后，重新生成用于显示用的pixmap，返回pixmap '''
         if self.cvGrayImage is None:
@@ -39,7 +42,7 @@ class Mask:
         # get color image
         # cv2.imshow('cvimage', cvImage)
         # cv2.waitKey(0)
-        self.cvColorImage = cvImage[y:y+h, x:x+w, :].copy()
+        self.cvColorImage = cvImage[y:y + h, x:x + w, :].copy()
         # cv2.imshow('colorimage', self.cvColorImage)
         # generate gray image
         self.cvGrayImage = cv2.cvtColor(self.cvColorImage, cv2.COLOR_BGR2GRAY)
@@ -50,6 +53,13 @@ class Mask:
         image = QtGui.QImage(rgbImage, rgbImage.shape[1], rgbImage.shape[0], rgbImage.shape[1] * 3,
                              QtGui.QImage.Format_RGB888)
         self.pixmap = QtGui.QPixmap.fromImage(image)
+
+    def coordinates_changed(self, x, y, w, h, cvImage):
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
+        self.load_image(cvImage)
 
     def to_json(self):
         data = OrderedDict({
@@ -70,4 +80,15 @@ class Mask:
         obj.h = jsondata['h']
         obj.name = jsondata['name']
         obj.binaryThreshold = jsondata['binaryThreshold']
+        return obj
+
+    @staticmethod
+    def obj_data(jsondata, name, x, y):
+        obj = Mask()
+        obj.x = x
+        obj.y = y
+        obj.w = jsondata.w
+        obj.h = jsondata.h
+        obj.name = 'mask_%s' % (name + 1)
+        obj.binaryThreshold = jsondata.binaryThreshold
         return obj
