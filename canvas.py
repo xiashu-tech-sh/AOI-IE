@@ -18,7 +18,10 @@ CURSOR_POINT = QtCore.Qt.PointingHandCursor
 CURSOR_DRAW = QtCore.Qt.CrossCursor
 CURSOR_MOVE = QtCore.Qt.ClosedHandCursor
 CURSOR_GRAB = QtCore.Qt.OpenHandCursor
+import logging
 
+logger = logging.getLogger('main.mod.submod')
+logger.debug('绘图界面')
 
 class Canvas(QtWidgets.QWidget):
     zoomRequest = QtCore.Signal(int, QtCore.QPoint)  # 缩放事件，按住ctrl+鼠标滚轮后触发
@@ -321,6 +324,7 @@ class Canvas(QtWidgets.QWidget):
             self.update()
             return
         # 鼠标点击事件
+        logger.debug('开始绘制，当前绘制类型：%s'% self.part_type)
         if not self.pixmap:
             return
         if QT5:
@@ -339,7 +343,7 @@ class Canvas(QtWidgets.QWidget):
                     assert len(self.current.points) == 1
                     self.current.points = self.line.points
                     self.finalise()  # 把 current拷贝到相应列表，完成绘制
-
+                    logger.debug('%s, 绘制完成'%self.part_type)
                 elif not self.outOfPixmap(pos):
                     # Mask只允许有4个，Location只允许有三个
                     # Create new shape.

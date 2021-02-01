@@ -18,22 +18,30 @@ class Part:
         self.h = h
         self.name = name
         self.folder = None
-        # 模板坐标点
+        # 漏件坐标
         self.leak_pos = []
+        # 漏件模板图片路径
         self.leak_path = None
+        #  漏件相似度
         self.leak_similar = None
+        # 错件坐标
         self.erron_pos = None
+        # 错件内容
         self.content = None
-        # 极反坐标点 [ [x,y，x1,y1],[x3,y3,x4,y4], ] x: 左上角x值 , y左上角y值 x1 :右下角x值 y1： 右下角y值
+        # 正负极坐标 [ [正], [负] ]
         self.Z_F_pos = []
-        # 模板灰度阈值
+        # 正极灰度值
         self.Z_gray = None
-        # 模板灰度差
+        # 负极灰度值
         self.F_gray = None
         # 检查类型
         self.detection_type = []
+        # 正负极阈值
         self.Z_F_hold = None
+        # OCR旋转角度
         self.rotation_angle = None
+        # 下拉框（颜色提取值）
+        self.set_value = None
         self.cvColorImage = None
         self.pixmap = None
 
@@ -77,15 +85,15 @@ class Part:
             'leak_pos': self.leak_pos,  # 漏检坐标点
             'leak_path': self.leak_path, # 漏检图片地址
             'leak_similar': self.leak_similar, # 漏检相似度
-
             'erron_pos':self.erron_pos, # 错件模板坐标点
             'content': self.content,# 内容
-            'rotation_angle':self.rotation_angle,
+            'rotation_angle':self.rotation_angle, # OCR旋转角度
             'Z_F_pos': self.Z_F_pos, # 正负极坐标点
             'Z_F_hold' : self.Z_F_hold,# 灰度差阈值
             'Z_gray': self.Z_gray,# 正极灰度值
             'F_gray': self.F_gray,# 负极灰度值
-            'detection_type': self.detection_type # 检测类型
+            'detection_type': self.detection_type, # 检测类型
+            'set_value':self.set_value
         }
         )
 
@@ -101,11 +109,9 @@ class Part:
         obj.w = jsondata['w']
         obj.h = jsondata['h']
         obj.name = jsondata['name']
-
         obj.leak_pos = jsondata['leak_pos']
         obj.leak_path = jsondata['leak_path']
         obj.leak_similar = jsondata['leak_similar']
-
         obj.erron_pos = jsondata['erron_pos']
         obj.content = jsondata['content']
         obj.rotation_angle = jsondata['rotation_angle']
@@ -113,8 +119,7 @@ class Part:
         obj.Z_F_hold = jsondata['Z_F_hold']
         obj.Z_gray = jsondata['Z_gray']
         obj.F_gray = jsondata['F_gray']
-
-
+        obj.set_value = jsondata['set_value']
         obj.detection_type = jsondata['detection_type']
         obj.content = jsondata['content']
 
@@ -151,6 +156,7 @@ class Part:
         obj.detection_type = jsondata.detection_type
         obj.content = jsondata.content
         obj.rotation_angle = jsondata.rotation_angle
+        obj.set_value = jsondata.set_value
         # obj.ng_type= jsondata['detect_type']
         #
         # for key in [MISSING, MISMATCH, REVERSE]:

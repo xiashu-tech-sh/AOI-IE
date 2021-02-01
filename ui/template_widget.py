@@ -1,7 +1,6 @@
 from PyQt5 import QtCore, QtWidgets
 from PyQt5.QtCore import pyqtSignal
 from PyQt5 import QtGui
-from ceshi import Ui_Form_edit
 from template_widget2 import Ui_Form
 import cv2
 import numpy as np
@@ -24,8 +23,9 @@ class TemplateWidget(QtWidgets.QWidget, Ui_Form):
         self.template = []
         self.saveButton.clicked.connect(self.savePatternSignal)
         self.listWidget.currentRowChanged.connect(self.item_changed)
-        self.lower = None
-        self.color_area = None
+        self.threshold = None
+        self.num_features = None
+        self.set_value = None
 
     def paste_by_name(self, new_part):
         self.template = new_part
@@ -57,30 +57,31 @@ class TemplateWidget(QtWidgets.QWidget, Ui_Form):
     #         # self.listWidget.takeItem(index)  # remove row from qlistwidget
     #         self.update_listwidget()
 
-    def threshold_changed(self, value):
+    def threshold_changed(self):
         ''' 拖动slider后的响应函数，更新图片显示 '''
         if not self.currentTemplate:
             return
         diff = self.threshSlider.value()
         index = self.comboBox.currentIndex()
+        self.set_value = [diff,index]
         if index == 5:
-            self.lower = [[35, 60, 90] ,[77, 255, 255]]  # 绿色阈值上下界
+            self.threshold = [[35, 60, 90] ,[77, 255, 255]]  # 绿色阈值上下界
         elif index == 1:
-            self.lower = [[100, 43, 46],[124, 255, 255]]  # 蓝色阈值上下界
+            self.threshold = [[100, 43, 46],[124, 255, 255]]  # 蓝色阈值上下界
         elif index == 2:
-            self.lower = [[0, 43, 46],[diff, 255, 255]]  # 红色阈值上下界
+            self.threshold = [[0, 43, 46],[diff, 255, 255]]  # 红色阈值上下界
         elif index == 3:
-            self.lower = [[26, 43, 46], [34, 255, 255]]  # 黄色阈值上下界
+            self.threshold = [[26, 43, 46], [34, 255, 255]]  # 黄色阈值上下界
         elif index == 4:
-            self.lower = [[125, 43, 46], [155, 255, 255]]  # 紫色阈值上下界
+            self.threshold = [[125, 43, 46], [155, 255, 255]]  # 紫色阈值上下界
         elif index == 0:
-            self.lower = [[diff, 0, 150],[180, 60, 255]]  # 白色阈值上下界
+            self.threshold = [[diff, 0, 150],[180, 60, 255]]  # 白色阈值上下界
         elif index == 6:
-            self.lower = [[diff, 0, 0],[188, 255, 77]]  # 黑色阈值上下界
+            self.threshold = [[diff, 0, 0],[188, 255, 77]]  # 黑色阈值上下界
         # elif index == 7:
-        #     self.lower = [[0, 0, 46],[180, 43, 220]]  # 灰色阈值上下界
+        #     self.threshold = [[0, 0, 46],[180, 43, 220]]  # 灰色阈值上下界
         img_hsv = cv2.cvtColor(self.template.cvColorImage, cv2.COLOR_BGR2HSV)
-        mask = cv2.inRange(img_hsv, np.array(self.lower[0]), np.array(self.lower[1]))
+        mask = cv2.inRange(img_hsv, np.array(self.threshold[0]), np.array(self.threshold[1]))
         mask = cv2.medianBlur(mask, 7)  # 中值滤波
         cnts1, hierarchy1 = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)  # 轮廓检测
         w_h_list = []
@@ -93,7 +94,7 @@ class TemplateWidget(QtWidgets.QWidget, Ui_Form):
             x, y, w, h = cv2.boundingRect(cnt)
         else:
             return
-        self.color_area = [x,y,w,h]
+        self.num_features = [x,y,w,h]
         temp_array = self.currentTemplate.cvColorImage.copy()
         data = cv2.rectangle(temp_array, (x,y), (x+w,y+h), (0, 0, 255) , 2, 4)
         rgbImage = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
@@ -105,9 +106,24 @@ class TemplateWidget(QtWidgets.QWidget, Ui_Form):
         self.label.setText(str(self.threshSlider.value()))
     def update_pixmap_show(self):
         if self.currentTemplate:
-            pixmap = self.currentTemplate.pixmap.scaled(self.previewLabel.size(), QtCore.Qt.KeepAspectRatio)
-            self.previewLabel.setPixmap(pixmap)
-            self.selectedChanged.emit('template', self.currentTemplate.name)
+            if self.currentTemplate.num_features:
+                x,y,w,h = self.currentTemplate.num_features
+                temp_array = self.currentTemplate.cvColorImage.copy()
+                data = cv2.rectangle(temp_array, (x, y), (x + w, y + h), (0, 0, 255), 2, 4)
+                rgbImage = cv2.cvtColor(data, cv2.COLOR_BGR2RGB)
+                image = QtGui.QImage(rgbImage, rgbImage.shape[1], rgbImage.shape[0], rgbImage.shape[1] * 3,
+                                     QtGui.QImage.Format_RGB888)
+                pixmap = QtGui.QPixmap.fromImage(image)
+                pixmap = pixmap.scaled(self.previewLabel.size(), QtCore.Qt.KeepAspectRatio)
+                self.previewLabel.setPixmap(pixmap)
+                self.label.setText(str(self.currentTemplate.set_value[0]))
+                self.threshSlider.setValue(self.currentTemplate.set_value[0])
+                self.comboBox.setCurrentIndex(self.currentTemplate.set_value[1])
+            else:
+                pixmap = self.currentTemplate.pixmap.scaled(self.previewLabel.size(), QtCore.Qt.KeepAspectRatio)
+                self.previewLabel.setPixmap(pixmap)
+                self.selectedChanged.emit('template', self.currentTemplate.name)
+
 
     def save_current(self):
         if not self.currentTemplate and not self.template:

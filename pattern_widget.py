@@ -17,9 +17,10 @@ from ui.pcb_location import PCBLocationWidget
 from ui.template_widget import TemplateWidget
 from ui.mask_widget import MaskWidget
 from ui.part_widget import PartWidget
-
+import logging
 new_action = lambda icon, text: QtWidgets.QAction(QtGui.QIcon(icon), text)
-
+logger = logging.getLogger('main.mod.submod')
+logger.debug('程式界面')
 
 class PatternWidget(QtWidgets.QWidget):
     ''' 程式设计界面，主要功能包括：
@@ -47,8 +48,8 @@ class PatternWidget(QtWidgets.QWidget):
 
         self.pcbLocationAction = new_action('./icon/1_pcb.png', 'PCB选取')
         self.templateAction = new_action('./icon/green-flag-50.png', '模板定位')
-        # self.maskAction = new_action('./icon/mask-50.png', 'Mask')
 
+        self.diodeAction = new_action('./icon/diode.png', '二极管')
         self.capacitorAction = new_action('./icon/capacitor.png', '电解电容')
         self.resistorAction = new_action('./icon/resistor.png', '色环电阻')
         self.slotAction = new_action('./icon/slot.png', '插槽')
@@ -60,7 +61,7 @@ class PatternWidget(QtWidgets.QWidget):
 
         for action in [self.pcbLocationAction, self.templateAction,
                        self.capacitorAction, self.resistorAction, self.slotAction,
-                       self.componentAction]:
+                       self.componentAction,self.diodeAction]:
             action.triggered.connect(self.mode_change_by_action)
 
         self.createAction.triggered.connect(self.create_pattern)
@@ -76,7 +77,7 @@ class PatternWidget(QtWidgets.QWidget):
             [self.captureAction, self.zoomInAction, self.zoomOutAction, self.cursorAction])
         self.toolbar.addSeparator()
         self.toolbar.addActions([self.pcbLocationAction, self.templateAction, self.capacitorAction,
-                                 self.resistorAction, self.slotAction, self.componentAction])
+                                 self.resistorAction, self.slotAction, self.diodeAction,self.componentAction])
         self.toolbar.addSeparator()
         self.toolbar.addActions([self.homeAction])
         self.toolbar.setIconSize(QtCore.QSize(32, 32))
@@ -194,7 +195,7 @@ class PatternWidget(QtWidgets.QWidget):
         self.canvas.mobile = False
         self.canvas.zoomInAction = True
         self.canvas.zoomOutAction = False
-    def color_extract(self, label_pos, name, ngtype, path_name, similar_value):
+    def color_extract(self, label_pos, name, ngtype, path_name, similar_value,set_value):
         for par in self.pattern.parts:
             if par.name == name:
                 par.leak_pos = label_pos
@@ -202,6 +203,7 @@ class PatternWidget(QtWidgets.QWidget):
                 par.leak_similar = similar_value
                 if ngtype not in par.detection_type:
                     par.detection_type.append(ngtype)
+                self.set_value = set_value
                 self.save_pattern()
                 break
     # 保存数据(相对元器件坐标点，元器件名称，类型，图片路径，相似度)
@@ -242,8 +244,10 @@ class PatternWidget(QtWidgets.QWidget):
         ''' 选择文件夹，创建程式 '''
         folder = QtWidgets.QFileDialog.getExistingDirectory(self, '请选择一个程式文件夹', './')
         if not folder or not os.path.exists(folder):
+            logger.debug('创建程式，选择不是文件夹')
             QtWidgets.QMessageBox.warning(self, '错误', '请选择一个文件夹路径')
             return
+        logger.debug('创建程式成功，目录：%s'%folder)
         self.pattern = Pattern(folder=folder)
         self.partWidget.folder = self.pattern.folder
         self.pattern.dirty = False
@@ -253,13 +257,16 @@ class PatternWidget(QtWidgets.QWidget):
         ''' 选择程式并加载 '''
         folder = QtWidgets.QFileDialog.getExistingDirectory(self, '选择程式文件夹', './')
         if not folder or not os.path.exists(folder):
+            logger.debug('打开程式，选择不是文件夹')
             QtWidgets.QMessageBox.warning(self, '错误', '请选择正确的程式路径')
             return
         imagefile = os.path.join(folder, 'image.jpg')
         infofile = os.path.join(folder, 'info.json')
         if not os.path.exists(imagefile) or not os.path.exists(infofile):
+            logger.debug('打开程式， 未查获取PCB版图片或Json文件')
             QtWidgets.QMessageBox.warning(self, '错误', '未找到程式信息，请选择正确的程式文件夹')
             return
+        logger.debug('打开程式成功，目录：%s' % folder)
         self.pattern = Pattern.from_folder(folder)
         self.show_pattern_info()
         # 设定比例
@@ -276,7 +283,7 @@ class PatternWidget(QtWidgets.QWidget):
         rectangle = QtCore.QRect(x, y, w, h)
         pixmap = orgPixmap.copy(rectangle)
         self.canvas.loadPixmap(pixmap)
-
+        logger.debug('加载PCB版图片成功，并显示')
         shapes = []
 
         # PCB截图加载
@@ -297,7 +304,7 @@ class PatternWidget(QtWidgets.QWidget):
 
             # init template widget
             self.templateWidget.template=template
-
+        logger.debug('绘制模板标注数据成功，并显示')
         # 加载Mask
 
         self.maskWidget.maskList.clear()
@@ -324,13 +331,14 @@ class PatternWidget(QtWidgets.QWidget):
             shape.points.extend([p1, p2])
             shapes.append(shape)
             self.partWidget.partList.append(part)
+        logger.debug('绘制part标注数据成功，并显示')
         self.canvas.loadShapes(shapes)
         self.canvas.update()
 
         # 更新界面显示
         self.partWidget.folder = self.pattern.folder
         self.templateWidget.update_listwidget()
-        self.templateWidget.Pcanvase = self.canvas
+        # self.templateWidget.Pcanvase = self.canvas
         self.maskWidget.update_listwidget()
         self.maskWidget.Pcanvase = self.canvas
         self.partWidget.update_tablewidget()
@@ -479,9 +487,11 @@ class PatternWidget(QtWidgets.QWidget):
         pixmap = self.canvas.pixmap.copy(rectangle)
         # step2: update pattern and widget show
         if classes == 'location':
+            logger.debug('修改PCB版图片大小')
             self.pattern.set_pcb_coordinate(x, y, w, h)
             self.locationWidget.set_pixmap(self.locationWidget.pcbLabel, pixmap)
         elif classes == 'template':
+            logger.debug('修改模板图片大小，模板名称:%s'% name)
             template = [t for t in self.pattern.templates if t.name == name][0]
             template.coordinates_changed(x, y, w, h, self.pattern.pcbCVImage)
             self.templateWidget.update_pixmap_show()
@@ -490,6 +500,7 @@ class PatternWidget(QtWidgets.QWidget):
             mask.coordinates_changed(x, y, w, h, self.pattern.pcbCVImage)
             self.maskWidget.update_pixmap_show()
         elif classes == 'part':
+            logger.debug('修改part图片大小，元件名称:%s' % name)
             part = [p for p in self.pattern.parts if p.name == name][0]
             part.coordinates_changed(x, y, w, h, self.pattern.pcbCVImage)
             self.partWidget.update_pixmap_show()
@@ -552,9 +563,11 @@ class PatternWidget(QtWidgets.QWidget):
         ''' 右上角tabwidget页面点击 '''
         self.canvas.copy_shape = None
         if index == 1:  # PCB定位页面
+            logger.debug("查看PCB版界面")
             self.canvas.shape_type = 'location'
             self.locationWidget.update_pixmap_show()
         elif index == 2:  # template页面
+            logger.debug("查看模板界面")
             self.canvas.shape_type = 'template'
             self.templateWidget.update_pixmap_show()
             # self.templateWidget.right_click_add()
@@ -563,6 +576,7 @@ class PatternWidget(QtWidgets.QWidget):
             self.maskWidget.update_pixmap_show()
             self.maskWidget.right_click_add()
         elif index == 4:  # part页面
+            logger.debug("查看part界面")
             self.canvas.shape_type = 'part'
             self.partWidget.update_pixmap_show()
             self.partWidget.right_click_add()
@@ -584,21 +598,29 @@ class PatternWidget(QtWidgets.QWidget):
             self.rightTopArea.setTabEnabled(1, True)
             self.rightTopArea.setCurrentWidget(self.locationWidget)
         elif action == self.templateAction:
+            logger.debug('选择模板绘制')
             self.canvas.shape_type = 'template'
             self.canvas.part_type = ''
             self.rightTopArea.setTabEnabled(2, True)
             self.rightTopArea.setCurrentWidget(self.templateWidget)
 
-        elif action in [self.capacitorAction, self.resistorAction, self.slotAction, self.componentAction]:
+        elif action in [self.capacitorAction, self.resistorAction, self.slotAction, self.componentAction,self.diodeAction]:
             self.canvas.shape_type = 'part'
             if action is self.capacitorAction:
+                logger.debug('选择电容绘制')
                 self.canvas.part_type = 'capacitor'
             elif action is self.resistorAction:
+                logger.debug('选择电阻绘制')
                 self.canvas.part_type = 'resistor'
             elif action is self.slotAction:
+                logger.debug('选择插槽绘制')
                 self.canvas.part_type = 'slot'
             elif action is self.componentAction:
+                logger.debug('选择一般元件绘制')
                 self.canvas.part_type = 'component'
+            elif action is self.diodeAction:
+                logger.debug('选择二极管绘制')
+                self.canvas.part_type = 'diode'
             self.rightTopArea.setTabEnabled(4, True)
             self.rightTopArea.setCurrentWidget(self.partWidget)
 
@@ -664,8 +686,10 @@ class PatternWidget(QtWidgets.QWidget):
             return
         for temp in self.pattern.templates:
             cv2.imwrite("%s/%s.jpg"%(self.pattern.folder,"template"), temp.cvColorImage)
-            temp.threshold = self.templateWidget.lower
-            temp.num_features = self.templateWidget.color_area
+            temp.threshold = self.templateWidget.threshold
+            temp.num_features = self.templateWidget.num_features
+            temp.set_value = self.templateWidget.set_value
+
             # if not temp.generate_shape_matching(tempdir):
             #     QtWidgets.QMessageBox.warning(self, '提示', '模板[{}]生成失败，请重新选取'.format(temp.name))
 

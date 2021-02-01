@@ -1,4 +1,6 @@
 import os
+
+import imutils
 from PyQt5.QtCore import Qt
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import pyqtSignal, QPointF
@@ -11,15 +13,17 @@ import cv2
 from PyQt5.QtGui import QFont
 from canvas import Canvas
 from shape import Shape
+import logging
 
+logger = logging.getLogger('main.mod.submod')
 
 class PartWidget(QtWidgets.QWidget, Ui_Form):
     savePatternSignal = QtCore.pyqtSignal(name='savePatternSignal')  # 保存pattern
     selectedChanged = QtCore.pyqtSignal(str, str, name='selectedChanged')
     parameterChanged = QtCore.pyqtSignal(name='parameterChanged')  # 任何程式相关的参数变化后都必须触发该信号告知父类pattern已被修改
     extremely_negative_emit = QtCore.pyqtSignal(list, str, int, list, str)
-    wrong_piece_emit = QtCore.pyqtSignal(list, str, str, str, list)
-    color_emait = QtCore.pyqtSignal(list, str, str, str, int)
+    wrong_piece_emit = QtCore.pyqtSignal(list, str, str, str, str)
+    color_emait = QtCore.pyqtSignal(list, str, str, str, int,list)
 
     def __init__(self):
         ''' part页面 '''
@@ -68,22 +72,14 @@ class PartWidget(QtWidgets.QWidget, Ui_Form):
         self.shapes.remove(shape)
 
     def debug_shape_action_clicke(self):
+        logger.debug("点击编辑元件按钮")
         # 实例化子窗口
         self.edit_window = EditWiget(self.partList[self.tab_index], self.folder)
         # self.edit_window.raw_imange.ng_type = "extremely_negative"
-        self.edit_window.extremelyNegative.connect(self.extremely_negative)
-        self.edit_window.Sigtemplate.connect(self.wrong_piece)
-        self.edit_window.colorSignal.connect(self.color)
-    def color(self, data_list, data_name, ng_type, path_name, similar_value):
-        self.color_emait.emit(data_list, data_name, ng_type, path_name, similar_value)
-    def wrong_piece(self, data_list, data_name, ng_type, path_name, similar_value):
-        self.wrong_piece_emit.emit(data_list, data_name, ng_type, path_name, similar_value)
-
-    def extremely_negative(self, pos_list, templape_name, threshold_value, difference, ngtype):
-        self.extremely_negative_emit.emit(pos_list, templape_name, threshold_value, difference, ngtype)
+        self.edit_window.extremelyNegative.connect(self.extremely_negative_emit)
+        self.edit_window.Sigtemplate.connect(self.wrong_piece_emit)
 
     def set_part(self, part):
-
         self.currentPart = part
         pixmap = self.currentPart.pixmap.scaled(self.previewLabel.size(), QtCore.Qt.KeepAspectRatio)
         self.previewLabel.setPixmap(pixmap)
@@ -167,9 +163,9 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
     # 极反
     extremelyNegative = QtCore.pyqtSignal(list, str, int, list, str)
     # 模板（漏件）
-    Sigtemplate = QtCore.pyqtSignal(list, str, str, str, list)
-    # 颜色抽取
-    colorSignal = QtCore.pyqtSignal(list, str, str, str, int)
+    Sigtemplate = QtCore.pyqtSignal(list, str, str, str, str)
+    # # 颜色抽取
+    # colorSignal = QtCore.pyqtSignal(list, str, str, str, int,list)
 
     def __init__(self, currentPart, folder):
         super().__init__()
@@ -193,32 +189,57 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
         self.pushButton_19.clicked.connect(self.generate_template)
         self.pushButton_4.clicked.connect(self.wrong_template)
         # 检测按钮
-        self.pushButton.clicked.connect(self.push_button)
+        self.pushButton_22.clicked.connect(self.push_button)
+        self.pushButton_15.clicked.connect(self.push_button)
         # 旋转按钮
         self.pushButton_5.clicked.connect(self.button_spin)
         # 获取检测区域按钮
-        self.pushButton_2.clicked.connect(self.find_button)
+        self.pushButton_21.clicked.connect(self.find_button)
+        self.pushButton_11.clicked.connect(self.find_button)
+        #  整体扩充
+        self.pushButton_2.clicked.connect(self.overall_expansion)
         # 正负极左右旋转
-        self.pushButton_10.clicked.connect(self.z_f_updown)
+        self.pushButton_14.clicked.connect(self.z_f_updown)
         # 正负极上下旋转
         self.pushButton_9.clicked.connect(self.z_f_spin)
         # 正负极左右旋转
         self.pushButton_12.clicked.connect(self.f_updown)
         # 正负极上下旋转
-        self.pushButton_11.clicked.connect(self.f_spin)
-        # # 错件类型下拉框处理
-        self.NG_value.currentIndexChanged.connect(self.ngType)
-        # 颜色下拉框
-        # self.NG_value_2.currentIndexChanged.connect(self.button_color)
-        self.dete_alg_value.currentIndexChanged.connect(self.dete_alg)
+        self.pushButton_13.clicked.connect(self.f_spin)
+        # 错件类型下拉框处理
+        self.NG_value.activated.connect(self.ngType)
+        # 检测算法下拉框
+        # self.dete_alg_value.activated.connect(self.dete_alg)
         # 提取颜色区域
         # self.pushButton_6.clicked.connect(self.extract_color)
         # self.pcb_color.currentIndexChanged.connect(self.color_part)
         # 检测按钮  生成模板
-        self.detect.clicked.connect(self.detect_button)
+        if self.currentParts.part_type == "diode":
+            pass
+        else:
+            self.detect.clicked.connect(self.detect_button)
         self.pushButton_3.clicked.connect(self.generate_template)
         # 根据元器件种类划分检测类型
-
+        # 电容颜色阈值滑动
+        self.horizontalSlider_2.valueChanged.connect(self.cap_changed)
+        # 插槽，二极管 滑动
+        self.horizontalSlider.valueChanged.connect(self.diode_changed)
+        # 向上填充
+        self.pushButton_6.clicked.connect(self.on_expansion)
+        # 向下填充
+        self.pushButton_7.clicked.connect(self.un_expansion)
+        # 向左填充
+        self.updown.clicked.connect(self.left_expansion)
+        # 向右填充
+        self.aboutButton.clicked.connect(self.right_expansion)
+        # 生成模板
+        self.pushButton.clicked.connect(self.cap_templ)
+        # 电容颜色选择下拉框
+        self.pcb_color_2.activated.connect(self.capa_down)
+        # 上下检测
+        self.pushButton_8.clicked.connect(self.up_dow_delete)
+        # 左右检测
+        self.pushButton_10.clicked.connect(self.about_delete)
         self.Z_ = 0
         self.F_ = 0
         self.rotation_angle = 0
@@ -226,13 +247,238 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
         self.TempNumpy = []
         self.pcbColor = None
         self.compColor = None
+        # 二极管黑色阈值
+        self.diode_value = 40
         self.type_name.setText(self.currentParts.part_type)
+        # 白色阈值
+        self.cap_value = 0
+        self.cap_color_diff = []
+        self.lower = None
         self.temp()
         # 默认提取红色
         self.color_lower = np.array([0, 43, 46])
         self.color_upper = np.array([10, 255, 255])
         self.color = 'red'
-        self.lower =None
+
+        self.set_value = None
+        # 电容类型控件
+        self.cap_type = self.currentParts.leak_similar
+        # 电容颜色额阈值(默认白色阈值)
+        self.cap_diff = 0
+        self.horizontalSlider_2.setValue(self.cap_diff)
+        logger.debug("初始化元件参数成功，当前元件名称：%s, 类型：%s"%(self.currentParts.name,self.currentParts.part_type))
+    def about_delete(self):
+        self.canvas.shapes = []
+        w, h = self.TempNumpy.shape[:2]
+        self.stackedWidget.setCurrentIndex(3)
+        positive_rectangle = [QtCore.QPoint(self.Z_, self.F_), QtCore.QPoint(25, w)]
+        negative_rectangle = [QtCore.QPoint(h-25, self.F_), QtCore.QPoint(h - self.F_, w - self.Z_)]
+        self.label_2.setText('Width: 15, Height: 32, vertex: (35, 43)')
+        pos_list = [positive_rectangle, negative_rectangle]
+        shapes = []
+        for i in pos_list:
+            shape = Shape(shape_type="pos_neg", name=self.currentParts.name)
+            shape.points.extend(i)
+            shapes.append(i)
+            self.canvas.shapes.append(shape)
+        self.canvas.update()
+        logger.debug("%s正负极检测为左右检测" % self.currentParts.name)
+    def up_dow_delete(self):
+        self.canvas.shapes = []
+        w, h = self.TempNumpy.shape[:2]
+        self.stackedWidget.setCurrentIndex(3)
+        positive_rectangle = [QtCore.QPoint(self.Z_, self.F_), QtCore.QPoint(h, 25)]
+        negative_rectangle = [QtCore.QPoint(self.Z_, w - self.Z_ - 25), QtCore.QPoint(h - self.F_, w - self.Z_)]
+        self.label_2.setText('Width: 15, Height: 32, vertex: (35, 43)')
+        pos_list = [positive_rectangle, negative_rectangle]
+        shapes = []
+        for i in pos_list:
+            shape = Shape(shape_type="pos_neg", name=self.currentParts.name)
+            shape.points.extend(i)
+            shapes.append(i)
+            self.canvas.shapes.append(shape)
+        self.canvas.update()
+        logger.debug("%s正负极检测为上下检测"%self.currentParts.name)
+    def button_color(self):
+        index = self.pcb_color_2.currentIndex()
+        if index == 5:
+            lower = [[35, 60, self.cap_diff] ,[77, 255, 255]]  # 绿色阈值上下界
+        elif index == 3:
+            lower = [[100, 43, self.cap_diff],[124, 255, 255]]  # 蓝色阈值上下界
+        elif index == 2:
+            lower = [[0, 43, self.cap_diff],[10, 255, 255]]  # 红色阈值上下界
+        elif index == 4:
+            lower = [[26, 43, self.cap_diff], [34, 255, 255]]  # 黄色阈值上下界
+        elif index == 6:
+            lower = [[125, 43, self.cap_diff], [155, 255, 255]]  # 紫色阈值上下界
+        elif index == 0:
+            lower = [[self.cap_diff, 0, 150],[180, 60, 255]]  # 白色阈值上下界
+        elif index == 1:
+            lower = [[self.cap_diff, 0, 0],[188, 255, 77]]  # 黑色阈值上下界
+        else:
+            lower = [[self.cap_diff, 0, 46],[180, 43, 220]]  # 灰色阈值上下界
+        self.cap_color_diff = lower
+        img_hsv = cv2.cvtColor(self.currentParts.cvColorImage, cv2.COLOR_BGR2HSV)
+        mask_red = cv2.inRange(img_hsv, np.array(lower[0]), np.array(lower[1]))
+        mask_red = cv2.medianBlur(mask_red, 7)  # 中值滤波
+        cnts1, hierarchy1 = cv2.findContours(mask_red, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)  # 轮廓检测 #红色
+        if cnts1:
+            cnt = max(cnts1, key=cv2.contourArea)
+            x, y, w, h = cv2.boundingRect(cnt)  # 该函数返回矩阵四个点
+            return x, y, w, h
+        else:
+            return 0,0,0,0
+    def capa_down(self,index):
+        if index == 5:
+            self.cap_diff = 90 # 绿色阈值上下界
+            logger.debug("选择元件颜色绿色")
+        elif index == 3:
+            self.cap_diff = 46  # 蓝色阈值上下界
+            logger.debug("选择元件颜色蓝色")
+        elif index == 2:
+            self.cap_diff =  0  # 红色阈值上下界
+            logger.debug("选择元件颜色红色")
+        elif index == 4:
+            self.cap_diff = 46 # 黄色阈值上下界
+            logger.debug("选择元件颜色黄色")
+        elif index == 6:
+            self.cap_diff = 46 # 紫色阈值上下界
+            logger.debug("选择元件颜色紫色")
+        elif index == 0:
+            self.cap_diff = 50  # 白色阈值上下界
+            logger.debug("选择元件颜色白色")
+        elif index == 1:
+            self.cap_diff = 47 # 黑色阈值上下界
+            logger.debug("选择元件颜色黑色")
+        else:
+            self.cap_diff = 0  # 灰色阈值上下界
+            logger.debug("选择元件颜色灰色")
+        self.horizontalSlider_2.setValue( self.cap_diff)
+        self.label_5.setText(str(self.cap_diff))
+        self.canvas.shapes = []
+        x, y, w, h = self.button_color()
+        component_rectangle = [QtCore.QPoint(x, y), QtCore.QPoint(w + x, h + y)]
+        self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)' % (w, h, x, y))
+        shape = Shape(shape_type="pos_neg", name=self.currentParts.name)
+        shape.points.extend(component_rectangle)
+        self.canvas.shapes.append(shape)
+        self.canvas.update()
+    def cap_templ(self):
+        x1, y1, x2, y2 = int(self.canvas.shapes[0][0].y()), int(self.canvas.shapes[0][1].y()), int(
+            self.canvas.shapes[0][0].x()), int(self.canvas.shapes[0][1].x())
+        self.TempNumpy = self.currentParts.cvColorImage[x1: y1, x2: y2]
+        path = self.folder + "/%s.jpg" % self.currentParts.name
+        rgbImage = cv2.cvtColor(self.TempNumpy, cv2.COLOR_BGR2RGB)
+        qt_img = QtGui.QImage(rgbImage, rgbImage.shape[1], rgbImage.shape[0], rgbImage.shape[1] * 3,
+                              QtGui.QImage.Format_RGB888)
+        image_qtdata = QtGui.QPixmap.fromImage(qt_img)
+        self.TempQimage = image_qtdata.scaled(self.template_image_2.size(), QtCore.Qt.KeepAspectRatio)
+        # 灰度图转换
+        hrgbImage = cv2.cvtColor(self.TempNumpy, cv2.COLOR_RGB2GRAY)
+        hqt_img = QtGui.QImage(hrgbImage, hrgbImage.shape[1], hrgbImage.shape[0], hrgbImage.shape[1] * 1,
+                               QtGui.QImage.Format_Indexed8)
+        himage_qtdata = QtGui.QPixmap.fromImage(hqt_img)
+        hQPixmapImage = himage_qtdata.scaled(self.template_image_3.size(), QtCore.Qt.KeepAspectRatio)
+        label_point = [x1, y1, x2, y2]
+        # 保存数据(相对元器件坐标点，元器件名称，类型，图片路径，相似度, 模板字)
+        self.template_image_2.setPixmap(self.TempQimage)
+        self.template_image_3.setPixmap(hQPixmapImage)
+        cv2.imwrite(path, self.TempNumpy)
+        self.Sigtemplate.emit(self.cap_color_diff, self.currentParts.name, "missing_parts", path, self.cap_type)
+        logger.debug("生成模板成功。元件名称：%s"%self.currentParts.name)
+    def overall_expansion(self):
+        self.canvas.shapes=[]
+        x, y, w, h = self.color_match(self.currentParts.cvColorImage)
+        w = self.currentParts.cvColorImage.shape[1] if x+w+20 > self.currentParts.cvColorImage.shape[1] else x+w+20
+        h = self.currentParts.cvColorImage.shape[0] if y + h + 20 > self.currentParts.cvColorImage.shape[
+            0] else y + h + 20
+        x = 0 if x - 20 < 0 else x - 20
+        y = 0 if y - 20 < 0 else y - 20
+
+        component_rectangle = [QtCore.QPoint(x, y), QtCore.QPoint(w , h )]
+        self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)' % (w, h, x, y))
+        shape = Shape(shape_type="pos_neg", name=self.currentParts.name)
+        shape.points.extend(component_rectangle)
+        self.canvas.shapes.append(shape)
+        self.canvas.update()
+        self.cap_type = "overall"
+        logger.debug("整体填充元件")
+    def on_expansion(self):
+        self.canvas.shapes = []
+        x, y, w, h = self.color_match(self.currentParts.cvColorImage)
+        pos1 = QtCore.QPoint(w + x, h + y)
+        y = 0 if y - 20 < 0 else y - 20
+        component_rectangle = [QtCore.QPoint(x, y),pos1 ]
+        self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)' % (w, h, x, y))
+        shape = Shape(shape_type="pos_neg", name=self.currentParts.name)
+        shape.points.extend(component_rectangle)
+        self.canvas.shapes.append(shape)
+        self.canvas.update()
+        self.cap_type = "on"
+        logger.debug("向上填充元件")
+    def un_expansion(self):
+        self.canvas.shapes = []
+        x, y, w, h = self.color_match(self.currentParts.cvColorImage)
+        pos = QtCore.QPoint(x, y)
+        h = self.currentParts.pixmap.height() if y + h + 20 > self.currentParts.pixmap.height() else y + h + 20
+        component_rectangle = [pos,QtCore.QPoint(w + x, h) ]
+        self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)' % (w, h, x, y))
+        shape = Shape(shape_type="pos_neg", name=self.currentParts.name)
+        shape.points.extend(component_rectangle)
+        self.canvas.shapes.append(shape)
+        self.canvas.update()
+        self.cap_type = "under"
+        logger.debug("向下填充元件")
+    def left_expansion(self):
+        self.canvas.shapes = []
+        x, y, w, h = self.color_match(self.currentParts.cvColorImage)
+        pos = QtCore.QPoint(w+x, h + y)
+        x = 0 if x - 20 < 0 else x - 20
+        component_rectangle = [QtCore.QPoint(x, y),pos]
+        self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)' % (w, h, x, y))
+        shape = Shape(shape_type="pos_neg", name=self.currentParts.name)
+        shape.points.extend(component_rectangle)
+        self.canvas.shapes.append(shape)
+        self.canvas.update()
+        self.cap_type = "left"
+        logger.debug("向左填充元件")
+    def right_expansion(self):
+        self.canvas.shapes = []
+        x, y, w, h = self.color_match(self.currentParts.cvColorImage)
+        h = self.currentParts.pixmap.width() if x + h + 20 > self.currentParts.pixmap.width() else x + h + 20
+        component_rectangle = [QtCore.QPoint(x, y),QtCore.QPoint(w , h ) ]
+        self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)' % (w, h, x, y))
+        shape = Shape(shape_type="pos_neg", name=self.currentParts.name)
+        shape.points.extend(component_rectangle)
+        self.canvas.shapes.append(shape)
+        self.canvas.update()
+        self.cap_type = "right"
+        logger.debug("向右填充元件")
+    def diode_changed(self):
+        self.canvas.shapes = []
+        self.diode_value = self.horizontalSlider.value()
+        self.label.setText(str(self.diode_value))
+        x, y, w, h = self.diode_color()
+        component_rectangle = [QtCore.QPoint(x, y), QtCore.QPoint(w + x, h + y)]
+        self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)' % (w, h, x, y))
+        shape = Shape(shape_type="pos_neg", name=self.currentParts.name)
+        shape.points.extend(component_rectangle)
+        self.canvas.shapes.append(shape)
+        self.canvas.update()
+        logger.debug("创建模板界面，调整颜色阈值为：%s" % self.diode_value)
+    def cap_changed(self):
+        self.canvas.shapes = []
+        self.cap_value = self.horizontalSlider_2.value()
+        self.label_5.setText(str(self.cap_value))
+        self.cap_diff = self.horizontalSlider_2.value()
+        x, y, w, h = self.button_color()
+        component_rectangle = [QtCore.QPoint(x, y), QtCore.QPoint(w + x, h + y)]
+        self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)' % (w, h, x, y))
+        shape = Shape(shape_type="pos_neg", name=self.currentParts.name)
+        shape.points.extend(component_rectangle)
+        self.canvas.shapes.append(shape)
+        self.canvas.update()
+        logger.debug("创建模板界面，调整颜色阈值为：%s"%self.cap_value)
     def color_get(self,index):
         if index == 0:
             self.lower = [[35, 60, 90] ,[77, 255, 255]]  # 绿色阈值上下界
@@ -245,7 +491,7 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
         elif index == 4:
             self.lower = [[125, 43, 46], [155, 255, 255]]  # 紫色阈值上下界
         elif index == 5:
-            self.lower = [[50, 0, 150],[180, 60, 255]]  # 白色阈值上下界
+            self.lower = [[0, 0, 150],[180, 60, 255]]  # 白色阈值上下界
         elif index == 6:
             self.lower = [[47, 0, 0],[188, 255, 77]]  # 黑色阈值上下界
         elif index == 7:
@@ -262,11 +508,24 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
         if w_h_list:
             cnt = max(w_h_list, key=cv2.contourArea)
             return cnt
+        # else:
+        #     self.box = QMessageBox(QMessageBox.Warning, "警告框", "未匹配到颜色")
+        #     self.box.addButton(self.tr("确定"), QMessageBox.YesRole)
+        #     self.box.exec_()
+    def black_diode(self):
+        img_hsv = cv2.cvtColor(self.currentParts.cvColorImage, cv2.COLOR_BGR2HSV)
+        lower = np.array([0, 0, 0])
+        upper = np.array([180, self.diode_value, 46])
+        shapeMask = cv2.inRange(img_hsv, lower, upper)
+        # 在mask中寻找轮廓
+        cnts = cv2.findContours(shapeMask.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        cnts = imutils.grab_contours(cnts)
+        if cnts:
+            cnt = max(cnts, key=cv2.contourArea)
+            x, y, w, h = cv2.boundingRect(cnt)
+            return x,y,w,h
         else:
-            self.box = QMessageBox(QMessageBox.Warning, "警告框", "未匹配到颜色")
-            self.box.addButton(self.tr("确定"), QMessageBox.YesRole)
-            self.box.exec_()
-
+            return 0,0,0,0
     def detect_button(self):
         self.canvas.shapes=[]
         pcv_index = self.pcb_color.currentIndex()
@@ -276,11 +535,16 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
         else:
             cnt = self.color_get(comp_index)
         if self.currentParts.part_type == "capacitor":
-            x, y, w, h = self.color_match()
+            x, y, w, h = self.color_match(self.currentParts.cvColorImage)
             component_rectangle = [QtCore.QPoint(x, y), QtCore.QPoint(w, h)]
+            self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)'%(w,h,x,y))
+        elif self.currentParts.part_type == "diode":
+            x,y,w,h = self.black_diode()
+            component_rectangle = [QtCore.QPoint(x, y), QtCore.QPoint(x+w, y+h)]
             self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)'%(w,h,x,y))
         else:
             x, y, w, h = cv2.boundingRect(cnt)  # 该函数返回矩阵四个点
+            self.lower.append([w,h])
             component_rectangle = [QtCore.QPoint(x, y), QtCore.QPoint(x+w, y+h)]
             self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)'%(w,h,x,y))
         shape = Shape(shape_type="pos_neg", name=self.currentParts.name)
@@ -362,7 +626,6 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
         self.canvas.update()
 
     def new_canvas(self,rgbImage):
-        print(rgbImage.shape)
         self.canvas = Canvas()
         # 缩放因子
         self.canvas.scale = 1
@@ -390,27 +653,7 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
         # 测试定义类型
         self.canvas.shape_type = 'pos_neg'
 
-    def button_color(self,index):
-        if index == 2:
-            self.color = 'blue'
-            self.color_lower = np.array([100, 43, 46])
-            self.color_upper = np.array([124, 255, 255])
-        elif index == 0:
-            self.color = 'red'
-            self.color_lower = np.array([0, 43, 46])
-            self.color_upper = np.array([10, 255, 255])
-        elif index == 1:
-            self.color = 'yellow'
-            self.color_lower = np.array([26, 43, 46])
-            self.color_upper = np.array([34, 255, 255])
-        elif index == 3:
-            self.color = 'green'
-            self.color_lower = np.array([35, 43, 46])
-            self.color_upper = np.array([77, 255, 255])
-        elif index == 4:
-            self.color = 'purple'
-            self.color_lower = np.array([125, 43, 46])
-            self.color_upper = np.array([155, 255, 255])
+
 
     def extract_color(self):
         x1, y1, x2, y2 = int(self.canvas.shapes[0][0].y()), int(self.canvas.shapes[0][1].y()), int(
@@ -456,20 +699,32 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
         # 保存数据(相对元器件坐标点，元器件名称，类型，图片路径，相似度, 模板字)
         self.template_image_5.setPixmap(QPixmapImage)
         self.template_image_3.setPixmap(hQPixmapImage)
-        self.colorSignal.emit(label_point, self.currentParts.name, "wrong_piece", self.color, percentage)
+        self.colorSignal.emit(label_point, self.currentParts.name, "wrong_piece", self.color, percentage,self.set_value)
 
     def type_distinguish(self):
-        if self.currentParts.part_type == "component"  :
+        if self.currentParts.part_type in [ "component","capacitor"]  :
             self.type_control(["漏件", "极反", "错件"])
-        elif self.currentParts.part_type in ["resistor","slot","capacitor"]:
+        elif self.currentParts.part_type in ["resistor","slot","diode"]:
             self.type_control(["错件", "极反"])
             self.NG_value.setCurrentIndex(2)
             self.dete_alg_value.setCurrentIndex(4)
             self.stackedWidget.setCurrentIndex(0)
 
+
     def button_spin(self):
         self.rotation_angle += -90
-        self.wrong_template()
+        x1, y1, x2, y2 = int(self.canvas.shapes[0][0].y()), int(self.canvas.shapes[0][1].y()), int(
+            self.canvas.shapes[0][0].x()), int(self.canvas.shapes[0][1].x())
+        pcv_nu = self.TempNumpy[x1: y1, x2: y2]
+        rows, cols, = pcv_nu.shape[0], pcv_nu.shape[1]
+        angle = cv2.getRotationMatrix2D((cols // 2, rows // 2), self.rotation_angle, 0.5)
+        pcv_numpy = cv2.warpAffine(pcv_nu, angle, (cols, rows))
+        rgbImage = cv2.cvtColor(pcv_numpy, cv2.COLOR_BGR2RGB)
+        qt_img = QtGui.QImage(rgbImage, rgbImage.shape[1], rgbImage.shape[0], rgbImage.shape[1] * 3,
+                              QtGui.QImage.Format_RGB888)
+        image_qtdata = QtGui.QPixmap.fromImage(qt_img)
+        QPixmapImage = image_qtdata.scaled(self.template_image_4.size(), QtCore.Qt.KeepAspectRatio)
+        self.template_image_4.setPixmap(QPixmapImage)
     def special_element(self):
         self.canvas.shapes = []
         component_rectangle = [QtCore.QPoint(35, 20), QtCore.QPoint(90, 100)]
@@ -498,35 +753,96 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
             self.template_image_3.setPixmap(hQPixmapImage)
             self.template_image_5.setPixmap(QPixmapImage)
             self.similarValue.setValue(self.currentParts.leak_similar)
-    def color_match(self):
-        lower_red = np.array([0, 0, 221])  # 白色阈值下界
-        higher_red = np.array([180, 30, 255])  # 白色阈值上界
-        img_hsv = cv2.cvtColor(self.currentParts.cvColorImage, cv2.COLOR_BGR2HSV)
+    def color_match(self,image_num):
+        try:
+            self.cap_color_diff[0] = ([self.cap_value, 0, 221])
+            self.cap_color_diff[1] = ([180, 30, 255])
+        except IndexError:
+            self.cap_color_diff.append([self.cap_value, 0, 221])
+            self.cap_color_diff.append([180, 30, 255])
+        lower_red = np.array(self.cap_color_diff[0])  # 白色阈值下界
+        higher_red = np.array(self.cap_color_diff[1])  # 白色阈值上界
+        img_hsv = cv2.cvtColor(image_num, cv2.COLOR_BGR2HSV)
         mask_red = cv2.inRange(img_hsv, lower_red, higher_red)  # 可以认为是过滤出红色部分，获得红色的掩膜
         mask_red = cv2.medianBlur(mask_red, 7)  # 中值滤波
-        cnts1, hierarchy1 = cv2.findContours(mask_red, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)  # 轮廓检测 #红色
+        cnts1, hierarchy1 = cv2.findContours(mask_red, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)  # 轮廓检测
         if cnts1:
             cnt = max(cnts1, key=cv2.contourArea)
             x, y, w, h = cv2.boundingRect(cnt)  # 该函数返回矩阵四个点
-            x = 0 if x - 20 < 0 else x - 20
-            y = 0 if y - 20 < 0 else y - 20
-            w = self.currentParts.cvColorImage.shape[1] if x+w+40 > self.currentParts.cvColorImage.shape[1] else x+w+40
-            h = self.currentParts.cvColorImage.shape[0] if y + h + 40 > self.currentParts.cvColorImage.shape[
-                0] else y + h + 40
             return x, y, w, h
         else:
             return 0,0,0,0
+    def diode_color(self):
+        index = self.comp_color.currentIndex()
+        if index == 0:
+            self.lower = [[35, 60, 90] ,[77, 255, 255]]  # 绿色阈值上下界
+            logger.debug("元件颜色为绿色")
+        elif index == 1:
+            logger.debug("元件颜色为蓝色")
+            self.lower = [[100, 43, 46],[124, 255, 255]]  # 蓝色阈值上下界
+        elif index == 2:
+            logger.debug("元件颜色为红色")
+            self.lower = [[0, 43, 46],[10, 255, 255]]  # 红色阈值上下界
+        elif index == 3:
+            logger.debug("元件颜色为黄色")
+            self.lower = [[26, 43, 46], [34, 255, 255]]  # 黄色阈值上下界
+        elif index == 4:
+            logger.debug("元件颜色为紫色")
+            self.lower = [[125, 43, 46], [155, 255, 255]]  # 紫色阈值上下界
+        elif index == 5:
+            logger.debug("元件颜色为白色")
+            self.lower = [[0, 0, 150],[180, 60, 255]]  # 白色阈值上下界
+        elif index == 6:
+            logger.debug("元件颜色为黑色")
+            self.lower = [[0, 0, 0],[180, self.diode_value, 46]]  # 黑色阈值上下界
+        elif index == 7:
+            logger.debug("元件颜色为灰色")
+            self.lower = [[0, 0, 46],[180, 43, 220]]  # 灰色阈值上下界
+        img_hsv = cv2.cvtColor(self.currentParts.cvColorImage, cv2.COLOR_BGR2HSV)
+        mask = cv2.inRange(img_hsv, np.array(self.lower[0]), np.array(self.lower[1]))
+        mask = cv2.medianBlur(mask, 7)  # 中值滤波
+        cnts1, hierarchy1 = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)  # 轮廓检测
+        w_h_list = []
+        for i in cnts1:  # 遍历所有的轮廓
+            x, y, w, h = cv2.boundingRect(i)  # 将轮廓分解为识别对象的左上角坐标和宽、高
+            if x != 0:
+                w_h_list.append(i)
+        if w_h_list:
+            cnt = max(w_h_list, key=cv2.contourArea)
+            x, y, w, h = cv2.boundingRect(cnt)  # 该函数返回矩阵四个点
+            return x, y, w, h
+        else:
+            return 0, 0, 0, 0
     def temp(self):
         self.canvas.shapes = []
         if self.currentParts.part_type == "capacitor":
-            x,y,w,h = self.color_match()
-            component_rectangle = [QtCore.QPoint(x, y), QtCore.QPoint(w, h)]
+            self.stackedWidget.setCurrentIndex(1)
+            x,y,w,h = self.color_match(self.currentParts.cvColorImage)
+            component_rectangle = [QtCore.QPoint(x, y), QtCore.QPoint(w+x, h+y)]
             self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)'%(w,h,x,y))
             shape = Shape(shape_type="pos_neg", name=self.currentParts.name)
             shape.points.extend(component_rectangle)
             self.canvas.shapes.append(shape)
-            self.comp_color.setCurrentIndex(5)
+            self.comp_color.setCurrentIndex(0)
+            self.label_5.setText(str(self.cap_value))
+        elif self.currentParts.part_type == "slot":
+            component_rectangle = [QtCore.QPoint(35, 20), QtCore.QPoint(90, 100)]
+            self.label_2.setText('Width: 55, Height: 70, vertex: (35, 20)')
+            shape = Shape(shape_type="pos_neg", name=self.currentParts.name)
+            shape.points.extend(component_rectangle)
+            self.canvas.shapes.append(shape)
+        elif self.currentParts.part_type == "diode":
+            self.comp_color.setCurrentIndex(6)
+            x,y,w,h = self.diode_color()
+            component_rectangle = [QtCore.QPoint(x, y), QtCore.QPoint(w+x, h+y)]
+            self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)'%(w,h,x,y))
+            shape = Shape(shape_type="pos_neg", name=self.currentParts.name)
+            shape.points.extend(component_rectangle)
+            self.canvas.shapes.append(shape)
+            self.label.setText(str(self.diode_value))
+            self.horizontalSlider.setValue(self.diode_value)
         else:
+            self.stackedWidget.setCurrentIndex(4)
             component_rectangle = [QtCore.QPoint(35, 20), QtCore.QPoint(90, 100)]
             self.label_2.setText('Width: 55, Height: 70, vertex: (35, 20)')
             shape = Shape(shape_type="pos_neg", name=self.currentParts.name)
@@ -534,34 +850,89 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
             self.canvas.shapes.append(shape)
         path = self.folder + "/%s.jpg" % self.currentParts.name
         if os.path.exists(path):
-            self.canvas.shapes[0].points = [
-                QtCore.QPoint(self.currentParts.leak_pos[2], self.currentParts.leak_pos[0]),
-                QtCore.QPoint(self.currentParts.leak_pos[3], self.currentParts.leak_pos[1])]
-            self.TempNumpy = cv2.imread(self.folder + "/%s.jpg" % self.currentParts.name)
+            logger.debug("加载元件模板图片")
+            if self.currentParts.part_type == "capacitor":
+                cv2.imwrite("10.jpg",self.currentParts.cvColorImage)
+                img_hsv = cv2.cvtColor(self.currentParts.cvColorImage, cv2.COLOR_BGR2HSV)
+                mask_red = cv2.inRange(img_hsv, np.array(self.currentParts.leak_pos[0]), np.array(self.currentParts.leak_pos[1]))  # 可以认为是过滤出红色部分，获得红色的掩膜
+                mask_red = cv2.medianBlur(mask_red, 7)  # 中值滤波
+                cnts1, hierarchy1 = cv2.findContours(mask_red, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)  # 轮廓检测 #红色
+                if cnts1:
+                    cnt = max(cnts1, key=cv2.contourArea)
+                    x, y, w, h = cv2.boundingRect(cnt)  # 该函数返回矩阵四个点
+                    h = y+h
+                    w = x+w
+                    if self.currentParts.leak_similar == "overall":
+                        logger.debug("元件为整体填充")
+                        x = 0 if x - 20 < 0 else x - 20
+                        y = 0 if y - 20 < 0 else y - 20
+                        w = self.currentParts.h if w + 20 > self.currentParts.h else w + 20
+                        h = self.currentParts.w if h + 20 > self.currentParts.w else h + 20
+                    elif self.currentParts.leak_similar == "on":
+                        logger.debug("元件为向上填充")
+                        y = 0 if y - 20 < 0 else y - 20
+                    elif self.currentParts.leak_similar == "under":
+                        logger.debug("元件为向下填充")
+                        h = self.currentParts.w if h + 20 > self.currentParts.w else h + 20
+                    elif self.currentParts.leak_similar == "left":
+                        logger.debug("元件为向左填充")
+                        x = 0 if x - 20 < 0 else x - 20
+                    elif self.currentParts.leak_similar == "right":
+                        logger.debug("元件为向右填充")
+                        w = self.currentParts.h if w + 20 > self.currentParts.h else w + 20
+                    self.canvas.shapes[0].points = [ QtCore.QPoint(x, y),QtCore.QPoint(w, h)]
+                    self.TempNumpy = self.currentParts.cvColorImage[y:h,x:w]
+            elif self.currentParts.part_type in ["diode","slot"]:
+                self.comp_color.setCurrentIndex(int(self.currentParts.leak_similar[0]))
+                self.pcb_color.setCurrentIndex(int(self.currentParts.leak_similar[1]))
+                self.horizontalSlider.setValue(self.currentParts.leak_pos[1][1])
+                img_hsv = cv2.cvtColor(self.currentParts.cvColorImage, cv2.COLOR_BGR2HSV)
+                mask = cv2.inRange(img_hsv, np.array(self.currentParts.leak_pos[0]), np.array(self.currentParts.leak_pos[1]))
+                mask = cv2.medianBlur(mask, 7)  # 中值滤波
+                cnts1, hierarchy1 = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)  # 轮廓检测
+                cnt = max(cnts1, key=cv2.contourArea)
+                x, y, w, h = cv2.boundingRect(cnt)  # 该函数返回矩阵四个点
+                self.canvas.shapes[0].points = [QtCore.QPoint(x, y), QtCore.QPoint(x+w, y+h)]
+                self.TempNumpy = self.currentParts.cvColorImage[y:y+h, x:x+w]
+
+            else:
+                self.TempNumpy = cv2.imread(self.folder + "/%s.jpg" % self.currentParts.name)
+                self.canvas.shapes[0].points = [
+                    QtCore.QPoint(self.currentParts.leak_pos[2], self.currentParts.leak_pos[0]),
+                    QtCore.QPoint(self.currentParts.leak_pos[3], self.currentParts.leak_pos[1])]
+                x = self.currentParts.leak_pos[0]
+                y = self.currentParts.leak_pos[2]
+                w = self.currentParts.leak_pos[3] - self.currentParts.leak_pos[2]
+                h = self.currentParts.leak_pos[1] - self.currentParts.leak_pos[0]
+
             rgbImage = cv2.cvtColor(self.TempNumpy, cv2.COLOR_BGR2RGB)
             qt_img = QtGui.QImage(rgbImage, rgbImage.shape[1], rgbImage.shape[0], rgbImage.shape[1] * 3,
                                   QtGui.QImage.Format_RGB888)
             image_qtdata = QtGui.QPixmap.fromImage(qt_img)
-            self.TempQimage = image_qtdata.scaled(self.template_image_5.size(), QtCore.Qt.KeepAspectRatio)
+            self.TempQimage = image_qtdata.scaled(self.template_image.size(), QtCore.Qt.KeepAspectRatio)
             # 灰度图转换
             hrgbImage = cv2.cvtColor(self.TempNumpy, cv2.COLOR_RGB2GRAY)
             hqt_img = QtGui.QImage(hrgbImage, hrgbImage.shape[1], hrgbImage.shape[0], hrgbImage.shape[1] * 1,
                                    QtGui.QImage.Format_Indexed8)
             himage_qtdata = QtGui.QPixmap.fromImage(hqt_img)
             hQPixmapImage = himage_qtdata.scaled(self.template_image_3.size(), QtCore.Qt.KeepAspectRatio)
-            self.template_image_5.setPixmap(self.TempQimage)
-            self.template_image_4.setPixmap(self.TempQimage)
+            # self.template_image_5.setPixmap(self.TempQimage)
+            self.template_image.setPixmap(self.TempQimage)
+            self.template_image_2.setPixmap(self.TempQimage)
             self.template_image_3.setPixmap(hQPixmapImage)
-            w = self.currentParts.leak_pos[3] -self.currentParts.leak_pos[2]
-            h = self.currentParts.leak_pos[1]-self.currentParts.leak_pos[0]
-            self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)' % (w,h,self.currentParts.leak_pos[0],self.currentParts.leak_pos[2]))
+            self.template_image_5.setPixmap(self.TempQimage)
+
+            self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)' % (w,h,x,y))
         self.canvas.update()
     def find_button(self):
         x, y = int(self.canvas.shapes[0].points[0].x()), int(self.canvas.shapes[0].points[0].y())
         x1, y1 = int(self.canvas.shapes[0].points[1].x()), int(self.canvas.shapes[0].points[1].y())
-        self.label_5.setFont(QFont("微软雅黑", 8))
-        self.label_5.setText("ROI坐标点 (1)x, y %s; \n (2)x1, y1 %s" % ((x, y), (x1, y1)))
-
+        if self.cap_type == "overall":
+            self.label_33.setFont(QFont("微软雅黑", 8))
+            self.label_33.setText("ROI坐标点 (1)x, y %s; \n (2)x1, y1 %s" % ((x, y), (x1, y1)))
+        else:
+            self.label_20.setFont(QFont("微软雅黑", 8))
+            self.label_20.setText("ROI坐标点 (1)x, y %s; \n (2)x1, y1 %s" % ((x, y), (x1, y1)))
     def test_show(self, list_pos):
         width = int(list_pos[1].x() - list_pos[0].x())
         height = int(list_pos[1].y() - list_pos[0].y())
@@ -570,28 +941,38 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
         self.label_2.setText('Width: %s, Height: %s, vertex: %s' % (width, height, vertex))
 
     def tabel_clicked(self, index):
-        if index.row() == 0:
+        try:
+            index = index.row()
+        except AttributeError: # 通过NG类型下拉框进入
+            index = index
+        if index == 0:
+            logger.debug("选择漏检编辑")
             rgbImage = cv2.cvtColor(self.currentParts.cvColorImage, cv2.COLOR_BGR2RGB)
             self.new_canvas(rgbImage)
-            if self.currentParts.part_type in ["resistor", "slot", "capacitor"]:
+            if self.currentParts.part_type == "capacitor":
+                self.NG_value.setCurrentIndex(2)
+                self.dete_alg_value.setCurrentIndex(4)
+                self.stackedWidget.setCurrentIndex(5)
+            elif self.currentParts.part_type in ["resistor", "slot","diode"]:
                 self.NG_value.setCurrentIndex(2)
                 self.dete_alg_value.setCurrentIndex(4)
                 self.stackedWidget.setCurrentIndex(0)
                 self.canvas.shapes = []
             else:
-                self.NG_value.setCurrentIndex(index.row())
-                self.dete_alg_value.setCurrentIndex(index.row())
+                self.NG_value.setCurrentIndex(index)
+                self.dete_alg_value.setCurrentIndex(index)
                 self.stackedWidget.setCurrentIndex(4)
             self.temp()
-        elif index.row() == 1:
+        elif index == 1:
+            logger.debug("选择极反编辑")
             # if self.currentParts.part_type in ["resistor", "slot", "capacitor"]:
             #     self.NG_value.setCurrentIndex(1)
             #     self.dete_alg_value.setCurrentIndex(1)
             #     self.stackedWidget.setCurrentIndex(1)
             # else:
-            self.NG_value.setCurrentIndex(index.row())
-            self.dete_alg_value.setCurrentIndex(index.row())
-            self.stackedWidget.setCurrentIndex(index.row())
+            self.NG_value.setCurrentIndex(index)
+            self.dete_alg_value.setCurrentIndex(index)
+            self.stackedWidget.setCurrentIndex(index)
             self.template_image_3.setPixmap(QPixmap(""))
             self.canvas.shapes = []
             if len(self.TempNumpy)>0:
@@ -602,18 +983,28 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
                 self.canvas.loadPixmap("")
                 return
             if self.currentParts.part_type == "capacitor":
-                positive_rectangle = [QtCore.QPoint(self.Z_, self.F_), QtCore.QPoint(30, 30)]
-                negative_rectangle = [QtCore.QPoint(w-self.Z_-30., h-self.F_-30), QtCore.QPoint(h-self.F_,w-self.Z_)]
-                self.label_2.setText('Width: 15, Height: 32, vertex: (35, 43)')
-            elif self.currentParts.part_type == "slot":
+                self.NG_value.setCurrentIndex(1)
+                self.dete_alg_value.setCurrentIndex(1)
+                if self.cap_type == "overall":
+                    self.stackedWidget.setCurrentIndex(5)
+                    positive_rectangle = [QtCore.QPoint(self.Z_, self.F_), QtCore.QPoint(30, 30)]
+                    negative_rectangle = [QtCore.QPoint(h-self.Z_-30., w-self.F_-30), QtCore.QPoint(h-self.F_,w-self.Z_)]
+                    self.label_2.setText('Width: 30, Height: 30, vertex: (0, 0)')
+                else:
+                    self.stackedWidget.setCurrentIndex(3)
+                    positive_rectangle = [QtCore.QPoint(self.Z_, self.F_), QtCore.QPoint(h, 30)]
+                    negative_rectangle = [QtCore.QPoint(self.Z_, w - self.Z_ - 30), QtCore.QPoint(h - self.F_, w - self.Z_)]
+                    self.label_2.setText('Width: %s, Height: 30, vertex: (0, 0)'%h)
+            elif self.currentParts.part_type in ["slot", "diode"] :
+                self.stackedWidget.setCurrentIndex(3)
                 positive_rectangle = [QtCore.QPoint(self.Z_, self.F_), QtCore.QPoint(h, 25)]
-                print("w,h",w,h)
                 negative_rectangle = [QtCore.QPoint(self.Z_, w-self.Z_-25), QtCore.QPoint( h-self.F_,w-self.Z_)]
-                self.label_2.setText('Width: 15, Height: 32, vertex: (35, 43)')
+                self.label_2.setText('Width: %s, Height: 25, vertex: (0, 0)'% h)
             else:
-                positive_rectangle = [QtCore.QPoint(35, 43), QtCore.QPoint(50, 75)]
-                negative_rectangle = [QtCore.QPoint(75, 43), QtCore.QPoint(90, 75)]
-                self.label_2.setText('Width: 15, Height: 32, vertex: (35, 43)')
+                self.stackedWidget.setCurrentIndex(3)
+                positive_rectangle = [QtCore.QPoint(0, 0), QtCore.QPoint(30, 30)]
+                negative_rectangle = [QtCore.QPoint(h-30, w-30), QtCore.QPoint(h, w)]
+                self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)'%(h,w,0,0))
             self.canvas.arrow_start = QPointF(50, 59)
             self.canvas.arrow_end = QPointF(70, 59)
             pos_list = [positive_rectangle, negative_rectangle]
@@ -625,10 +1016,18 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
                 self.canvas.shapes.append(shape)
 
             if self.currentParts.Z_F_pos:
+                logger.debug("已存在，加载并绘制正负极数据")
+                self.canvas.shapes = []
                 for i in range(2):
                     x, y = int(self.currentParts.Z_F_pos[i][2]), int(self.currentParts.Z_F_pos[i][0])
                     x1, y1 = int(self.currentParts.Z_F_pos[i][3]), int(self.currentParts.Z_F_pos[i][1])
-                    self.canvas.shapes[i].points = [QtCore.QPoint(x, y), QtCore.QPoint(x1, y1)]
+                    component_rectangle = [QtCore.QPoint(x, y), QtCore.QPoint(x1,y1)]
+                    self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)' % (w, h, x, y))
+                    shape = Shape(shape_type="pos_neg", name=self.currentParts.name)
+                    shape.points.extend(component_rectangle)
+                    self.canvas.shapes.append(shape)
+                    self.comp_color.setCurrentIndex(0)
+                    self.label_5.setText(str(self.cap_value))
                     if i == 1:
                         if self.canvas.shapes[1][0].x() - self.canvas.shapes[0][1].x() <= 5:
                             self.canvas.arrow_start = QPointF(
@@ -645,46 +1044,75 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
                         self.canvas.arrow_start = QPointF(x1, (y1 - y) // 2 + y)
                 difference = int(self.currentParts.Z_gray - self.currentParts.F_gray)
                 strT = '<span style=\" color: #ff0000;\">%s</span>' % difference  # 红色
-                self.g_difference_value.setText("%s" % (strT))  # 界面显示
-                threshold_value = self.currentParts.Z_F_hold
-                self.g_PN_threshold_value.setValue(threshold_value)
-                if difference>0:
-                    self.label_4.setText("正极")
+                if self.cap_type == "overall":
+                    self.label_37.setText("%s" % (strT))  # 界面显示
+                    # grayscale = [int(positive_mean), int(negative_mean), self.g_PN_threshold_value.value() ]
+                    # self.g_PN_threshold_value.value = threshold_value
+                    if difference > 0:
+                        self.label_38.setText("正极")
+                    else:
+                        self.label_38.setText("负极")
                 else:
-                    self.label_4.setText("负极")
+                    self.label_26.setText("%s" % (strT))  # 界面显示
+                    # grayscale = [int(positive_mean), int(negative_mean), self.g_PN_threshold_value.value() ]
+                    # self.g_PN_threshold_value.value = threshold_value
+                    if difference > 0:
+                        self.label_25.setText("正极")
+                    else:
+                        self.label_25.setText("负极")
+
                 w = self.currentParts.Z_F_pos[0][3] - self.currentParts.Z_F_pos[0][2]
                 h = self.currentParts.Z_F_pos[0][1] - self.currentParts.Z_F_pos[0][0]
                 self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)' % (
                 w, h, self.currentParts.Z_F_pos[0][0], self.currentParts.Z_F_pos[0][2]))
 
             self.canvas.update()
-        elif index.row() == 2:
-            self.NG_value.setCurrentIndex(index.row())
-            self.dete_alg_value.setCurrentIndex(index.row())
-            self.stackedWidget.setCurrentIndex(index.row())
+        elif index == 2:
+            logger.debug("选择错件编辑")
+            self.NG_value.setCurrentIndex(index)
+            self.dete_alg_value.setCurrentIndex(index)
+            self.stackedWidget.setCurrentIndex(index)
             self.template_image_3.setPixmap(QPixmap(""))
             self.canvas.shapes = []
-            if len(self.TempNumpy)>0:
+            if len(self.TempNumpy) > 0:
                 rgbImage = cv2.cvtColor(self.TempNumpy, cv2.COLOR_BGR2RGB)
                 self.new_canvas(rgbImage)
+                if self.currentParts.part_type == "capacitor":
+                    x, y, w, h = self.color_match(self.TempNumpy)
+                    pcv_numpy = self.TempNumpy[y: y + h, x: x + w]
+                    rows, cols, = pcv_numpy.shape[0], pcv_numpy.shape[1]
+                    angle = cv2.getRotationMatrix2D((cols // 2, rows // 2), self.rotation_angle, 0.5)
+                    pcv_numpy = cv2.warpAffine(pcv_numpy, angle, (cols, rows))
+                    rgbImage = cv2.cvtColor(pcv_numpy, cv2.COLOR_BGR2RGB)
+                    qt_img = QtGui.QImage(rgbImage, rgbImage.shape[1], rgbImage.shape[0], rgbImage.shape[1] * 3,
+                                          QtGui.QImage.Format_RGB888)
+                    image_qtdata = QtGui.QPixmap.fromImage(qt_img)
+                    QPixmapImage = image_qtdata.scaled(self.template_image_4.size(), QtCore.Qt.KeepAspectRatio)
+                    self.template_image_4.setPixmap(QPixmapImage)
+                    self.wrong_pos = [QtCore.QPoint(x, y), QtCore.QPoint(x + w, y + h)]
+                    self.label_2.setText('Width: %s, Height: %s, vertex: (%s, %s)'%(w,h,x,y))
+                else:
+                    self.wrong_pos = [QtCore.QPoint(0, 0), QtCore.QPoint(30, 30)]
+                    self.label_2.setText('Width: 30, Height: 30, vertex: (0, 0)')
             else:
                 self.canvas.loadPixmap("")
                 return
-            component_rectangle = [QtCore.QPoint(35, 20), QtCore.QPoint(90, 100)]
-            self.label_2.setText('Width: 55, Height: 70, vertex: (35, 20)')
+
             shape = Shape(shape_type="pos_neg", name=self.currentParts.name)
-            shape.points.extend(component_rectangle)
+            shape.points.extend(self.wrong_pos)
             self.canvas.shapes.append(shape)
 
             if self.currentParts.erron_pos:
+                logger.debug("已存在，加载并绘制错件数据")
                 self.canvas.shapes[0].points = [
                     QtCore.QPoint(int(self.currentParts.erron_pos[2]), int(self.currentParts.erron_pos[0])),
                     QtCore.QPoint(int(self.currentParts.erron_pos[3]), int(self.currentParts.erron_pos[1]))]
                 x1, y1, x2, y2 = self.currentParts.erron_pos[0], self.currentParts.erron_pos[1],self.currentParts.erron_pos[2], self.currentParts.erron_pos[3]
-                pcv_nu = self.TempNumpy[ x1: y1,x2: y2]
-                rows, cols, = pcv_nu.shape[0], pcv_nu.shape[1]
-                angle = cv2.getRotationMatrix2D((cols // 2, rows // 2), self.currentParts.rotation_angle, 0.5)
-                pcv_numpy = cv2.warpAffine(pcv_nu, angle, (cols, rows))
+                pcv_numpy = self.TempNumpy[ x1: y1,x2: y2]
+                if self.currentParts.part_type == "capacitor":
+                    rows, cols, = pcv_numpy.shape[0], pcv_numpy.shape[1]
+                    angle = cv2.getRotationMatrix2D((cols // 2, rows // 2), int(self.currentParts.rotation_angle), 0.5)
+                    pcv_numpy = cv2.warpAffine(pcv_numpy, angle, (cols, rows))
                 rgbImage = cv2.cvtColor(pcv_numpy, cv2.COLOR_BGR2RGB)
                 qt_img = QtGui.QImage(rgbImage, rgbImage.shape[1], rgbImage.shape[0], rgbImage.shape[1] * 3,
                                       QtGui.QImage.Format_RGB888)
@@ -794,12 +1222,13 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
         label_point = [x1, y1, x2, y2] # 坐标点
         template_content = self.start_interval_4.text() # 模板文字
         if template_content:
-            self.Sigtemplate.emit(label_point, self.currentParts.name, "wrong_piece", template_content, self.rotation_angle)
+            self.Sigtemplate.emit(label_point, self.currentParts.name, "wrong_piece", template_content, str(self.rotation_angle))
         else:
             self.box = QMessageBox(QMessageBox.Warning, "警告框", "请输入模板文字")
             self.box.addButton(self.tr("确定"), QMessageBox.YesRole)
             self.box.exec_()
 
+        logger.debug("生成错件模板成功。元件名称：%s，模板文字%s， 旋转角度%s" % (self.currentParts.name,template_content,self.rotation_angle))
     def generate_template(self):
         x1, y1, x2, y2 = int(self.canvas.shapes[0][0].y()), int(self.canvas.shapes[0][1].y()), int(
             self.canvas.shapes[0][0].x()), int(self.canvas.shapes[0][1].x())
@@ -820,33 +1249,51 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
 
         label_point = [x1, y1, x2, y2]
         # 相似度
-        similar_value = [self.similarValue.value()]
+        similar_value = str(self.similarValue.value())
         template_content = self.start_interval_4.text()
         # 保存数据(相对元器件坐标点，元器件名称，类型，图片路径，相似度, 模板字)
         self.template_image.setPixmap(self.TempQimage)
         self.template_image_3.setPixmap(hQPixmapImage)
+        self.template_image_5.setPixmap(self.TempQimage)
         cv2.imwrite(path, self.TempNumpy)
-        if self.currentParts.part_type in ["resistor", "slot", "capacitor"]:
-            self.Sigtemplate.emit(label_point, self.currentParts.name, "missing_parts", path, self.lower)
+        index = str(self.comp_color.currentIndex())+str(self.pcb_color.currentIndex())
+
+        if self.currentParts.part_type in ["resistor", "slot", "capacitor","diode"]:
+            print(self.lower, self.currentParts.name, "missing_parts", path, index)
+            self.Sigtemplate.emit(self.lower, self.currentParts.name, "missing_parts", path, index)
         else:
             self.Sigtemplate.emit(label_point, self.currentParts.name, "missing_parts", path, similar_value)
 
-
+        logger.debug("生成模板成功。元件名称：%s" % self.currentParts.name)
     def ngType(self, index):
-        if self.currentParts.part_type in ["resistor", "slot", "capacitor"]:
+        if self.currentParts.part_type in ["resistor", "slot"]:
             if index == 2:
                 self.dete_alg_value.setCurrentIndex(4)
                 self.stackedWidget.setCurrentIndex(0)
             elif index ==1:
                 self.dete_alg_value.setCurrentIndex(1)
                 self.stackedWidget.setCurrentIndex(1)
+        elif self.currentParts.part_type == "capacitor":
+            if index == 0:
+                self.dete_alg_value.setCurrentIndex(3)
+                self.stackedWidget.setCurrentIndex(1)
+            elif index == 1:
+                self.dete_alg_value.setCurrentIndex(1)
+                if self.cap_type == "overall":
+                    self.stackedWidget.setCurrentIndex(5)
+                else:
+                    self.stackedWidget.setCurrentIndex(3)
+            else:
+                self.stackedWidget.setCurrentIndex(2)
+                self.dete_alg_value.setCurrentIndex(2)
         else:
             if index ==0:
                 self.stackedWidget.setCurrentIndex(4)
             else:
                 self.stackedWidget.setCurrentIndex(index)
-            self.tabWidget.setCurrentIndex(index)
+            self.stackedWidget.setCurrentIndex(index)
             self.dete_alg_value.setCurrentIndex(index)
+        self.tabel_clicked(index)
     def dete_alg(self, index):
         if self.currentParts.part_type in ["resistor", "slot", "capacitor"]:
             if index == 4:
@@ -876,7 +1323,7 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
         positive_lwpImg = cv2.cvtColor(P_components, cv2.COLOR_BGR2GRAY)  # 转为灰度图
         positive_mean = int(np.mean(positive_lwpImg))
         # 负极元器件灰度值
-        negative_cropped = self.TempNumpy [x3:y3, x4:y4]
+        negative_cropped = self.TempNumpy[x3:y3, x4:y4]
 
         negative_lwpImg = cv2.cvtColor(negative_cropped, cv2.COLOR_BGR2GRAY)  # 转为灰度图
         negative_mean = int(np.mean(negative_lwpImg))
@@ -884,17 +1331,26 @@ class EditWiget(QtWidgets.QWidget, Ui_Form_edit):
         difference = positive_mean - negative_mean
         # self.g_difference_value.se
         strT = '<span style=\" color: #ff0000;\">%s</span>' % difference  # 红色
-        self.g_difference_value.setText("%s" % (strT))  # 界面显示
-        # grayscale = [int(positive_mean), int(negative_mean), self.g_PN_threshold_value.value() ]
-        # self.g_PN_threshold_value.value = threshold_value
-        threshold_value = self.g_PN_threshold_value.value()
-        if difference>0:
-            self.label_4.setText("正极")
+        # 不同界面
+        if self.cap_type == "overall":
+            self.label_37.setText("%s" % (strT))  # 界面显示
+            # grayscale = [int(positive_mean), int(negative_mean), self.g_PN_threshold_value.value() ]
+            # self.g_PN_threshold_value.value = threshold_value
+            if difference>0:
+                self.label_38.setText("正极")
+            else:
+                self.label_38.setText("负极")
         else:
-            self.label_4.setText("负极")
+            self.label_26.setText("%s" % (strT))  # 界面显示
+            # grayscale = [int(positive_mean), int(negative_mean), self.g_PN_threshold_value.value() ]
+            # self.g_PN_threshold_value.value = threshold_value
+            if difference>0:
+                self.label_25.setText("正极")
+            else:
+                self.label_25.setText("负极")
         self.update()
         label_pos = [[x1, y1, x2, y2], [x3, y3, x4, y4]]
         Z_F = [positive_mean,negative_mean]
         # 保存数据 （坐标点，元器件名称，阈值灰度差，实际差, 类型）
-        self.extremelyNegative.emit(label_pos, self.currentParts.name, threshold_value, Z_F,
+        self.extremelyNegative.emit(label_pos, self.currentParts.name, difference, Z_F,
                                     "extremely_negative")

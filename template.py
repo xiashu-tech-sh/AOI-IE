@@ -14,9 +14,9 @@ class Template:
         self.name = name
         self.pixmap = None  # pixmap，用于显示
         self.cvColorImage = None  # cv彩色图像
-        self.threshold = None  # 二值化阈值
-        self.num_features = 16  # shape_matching 算法的特征数量
-        self.detector = None  # 用于shape_matching形状匹配
+        self.threshold = None  # 匹配颜色阈值
+        self.num_features = None  # 区域矩形A、C 坐标点
+        self.set_value = None  # 颜色阈值，下拉框阈值
 
     def __getitem__(self, index):
         return [self.x, self.y, self.w, self.h][index]
@@ -34,9 +34,9 @@ class Template:
         image = QtGui.QImage(rgbImage, rgbImage.shape[1], rgbImage.shape[0], rgbImage.shape[1] * 3,
                              QtGui.QImage.Format_RGB888)
         self.pixmap = QtGui.QPixmap.fromImage(image)
-
-    def get_detector(self):
-        return self.detector
+    #
+    # def get_detector(self):
+    #     return self.detector
 
     def coordinates_changed(self, x, y, w, h, cvImage):
         self.x = x
@@ -53,7 +53,9 @@ class Template:
             'h': self.h,
             'name': self.name,
             'threshold': self.threshold,
-            'num_features': self.num_features})
+            'num_features': self.num_features,
+            'set_value':self.set_value})
+
         return data
 
     @staticmethod
@@ -66,6 +68,7 @@ class Template:
         obj.name = jsondata['name']
         obj.threshold = jsondata['threshold']
         obj.num_features = jsondata['num_features']
+        obj.set_value = jsondata['set_value']
         return obj
 
     @staticmethod
@@ -78,4 +81,5 @@ class Template:
         obj.name = 'template_%s' % (name + 1)
         obj.threshold = jsondata.threshold
         obj.num_features = jsondata.num_features
+        obj.set_value = jsondata.set_value
         return obj

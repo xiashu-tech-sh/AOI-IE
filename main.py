@@ -17,6 +17,11 @@ import torch
 SOURCE_CAMERA = 0
 SOURCE_VIDEO = 1
 from ModelLoad import model_add
+import logging.config
+
+logging.config.fileConfig('logs/logging.conf')
+logger = logging.getLogger('main')
+
 class MainWin(QtWidgets.QMainWindow):
     ''' 主界面。centerWidget由一个QStackWidget构成，QStackWidget添加了以下两个界面：
             1. onile_widget.py文件中的OnlineWidget界面，默认显示；
@@ -128,6 +133,7 @@ class MainWin(QtWidgets.QMainWindow):
                 str_serial_number = str_serial_number + chr(per)
         # 实例化相机
         self.exampleCamera = MvCamera()
+        logger.debug('初始化相机成功')
         # 创建设备句柄
         ret = self.exampleCamera.MV_CC_CreateHandle(mvcc_dev_info)
         if ret != 0:

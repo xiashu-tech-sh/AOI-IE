@@ -17,8 +17,8 @@ from mask import Mask
 from part import Part, MISSING, MISMATCH, REVERSE
 import algorithm as alg
 from utils import cv_imread, cv_imwrite
-
-
+import logging
+logger = logging.getLogger('main.mod.submod')
 class Pattern:
     def __init__(self, folder=''):
         ''' 创建程式，程式的基础信息包含在folder文件夹中 '''
@@ -108,10 +108,12 @@ class Pattern:
         
         self.ax_pcbs = list(jsondata['ax_pcbs'])
         for template in jsondata['templates']:
+            logger.debug('加载templates数据')
             self.templates.append(Template.from_json(template))
         for mask in jsondata['masks']:
             self.masks.append(Mask.from_json(mask))
         for part in jsondata['parts']:
+            logger.debug('加载part数据')
             self.parts.append(Part.from_json(part))
 
 
