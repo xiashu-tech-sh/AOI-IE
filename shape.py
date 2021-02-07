@@ -124,6 +124,8 @@ class Shape(object):
                     if self.selected else self.fill_color
                 painter.fillPath(line_path, color)
 
+
+
     def drawVertex(self, path, i):
         d = self.point_size / self.scale
         shape = self.point_type

@@ -48,7 +48,7 @@ class PatternWidget(QtWidgets.QWidget):
 
         self.pcbLocationAction = new_action('./icon/1_pcb.png', 'PCB选取')
         self.templateAction = new_action('./icon/green-flag-50.png', '模板定位')
-
+        self.maskAction = new_action('./icon/mask-50.png', 'Mask')
         self.diodeAction = new_action('./icon/diode.png', '二极管')
         self.capacitorAction = new_action('./icon/capacitor.png', '电解电容')
         self.resistorAction = new_action('./icon/resistor.png', '色环电阻')
@@ -59,7 +59,7 @@ class PatternWidget(QtWidgets.QWidget):
 
         self.cursorAction.triggered.connect(self.cursor_action)
 
-        for action in [self.pcbLocationAction, self.templateAction,
+        for action in [self.pcbLocationAction, self.templateAction,self.maskAction,
                        self.capacitorAction, self.resistorAction, self.slotAction,
                        self.componentAction,self.diodeAction]:
             action.triggered.connect(self.mode_change_by_action)
@@ -76,7 +76,7 @@ class PatternWidget(QtWidgets.QWidget):
         self.toolbar.addActions(
             [self.captureAction, self.zoomInAction, self.zoomOutAction, self.cursorAction])
         self.toolbar.addSeparator()
-        self.toolbar.addActions([self.pcbLocationAction, self.templateAction, self.capacitorAction,
+        self.toolbar.addActions([self.pcbLocationAction, self.templateAction, self.capacitorAction,self.maskAction,
                                  self.resistorAction, self.slotAction, self.diodeAction,self.componentAction])
         self.toolbar.addSeparator()
         self.toolbar.addActions([self.homeAction])
@@ -498,7 +498,7 @@ class PatternWidget(QtWidgets.QWidget):
         elif classes == 'mask':
             mask = [m for m in self.pattern.masks if m.name == name][0]
             mask.coordinates_changed(x, y, w, h, self.pattern.pcbCVImage)
-            self.maskWidget.update_pixmap_show()
+            self.maskWidget.update_pixmap_show(False)
         elif classes == 'part':
             logger.debug('修改part图片大小，元件名称:%s' % name)
             part = [p for p in self.pattern.parts if p.name == name][0]
@@ -572,8 +572,9 @@ class PatternWidget(QtWidgets.QWidget):
             self.templateWidget.update_pixmap_show()
             # self.templateWidget.right_click_add()
         elif index == 3:  # mask页面
+            logger.debug("查看Mask界面")
             self.canvas.shape_type = 'mask'
-            self.maskWidget.update_pixmap_show()
+            self.maskWidget.update_pixmap_show(True)
             self.maskWidget.right_click_add()
         elif index == 4:  # part页面
             logger.debug("查看part界面")
@@ -603,7 +604,12 @@ class PatternWidget(QtWidgets.QWidget):
             self.canvas.part_type = ''
             self.rightTopArea.setTabEnabled(2, True)
             self.rightTopArea.setCurrentWidget(self.templateWidget)
-
+        elif action == self.maskAction:
+            logger.debug('选择电容绘制')
+            self.canvas.shape_type = 'mask'
+            self.canvas.part_type = ''
+            self.rightTopArea.setTabEnabled(3, True)
+            self.rightTopArea.setCurrentWidget(self.maskWidget)
         elif action in [self.capacitorAction, self.resistorAction, self.slotAction, self.componentAction,self.diodeAction]:
             self.canvas.shape_type = 'part'
             if action is self.capacitorAction:

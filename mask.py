@@ -15,7 +15,11 @@ class Mask:
         self.cvColorImage = None  # cv彩色图像
         self.cvGrayImage = None  # cv灰度图
         self.binaryImage = None  # cv二值图
-        self.binaryThreshold = 100  # 二值化阈值
+        self.binaryThreshold = 0  # 二值化阈值
+        self.round = None # 圆心坐标点
+        self.reverse = False # 是否翻转
+        self.radius = None # 半径
+        self.meter = None # 半径阈值
 
     def __getitem__(self, index):
         return [self.x, self.y, self.w, self.h][index]
@@ -27,7 +31,10 @@ class Mask:
         if threshold == self.binaryThreshold and self.pixmap is not None:
             return self.pixmap
         self.binaryThreshold = threshold
-        _, self.binaryImage = cv2.threshold(self.cvGrayImage, self.binaryThreshold, 255, cv2.THRESH_BINARY)
+        if self.reverse:
+            _, self.binaryImage = cv2.threshold(self.cvGrayImage, self.binaryThreshold, 255, cv2.THRESH_BINARY_INV)
+        else:
+            _, self.binaryImage = cv2.threshold(self.cvGrayImage, self.binaryThreshold, 255, cv2.THRESH_BINARY)
         rgbImage = cv2.cvtColor(self.binaryImage, cv2.COLOR_GRAY2RGB)
         image = QtGui.QImage(rgbImage, rgbImage.shape[1], rgbImage.shape[0], rgbImage.shape[1] * 3,
                              QtGui.QImage.Format_RGB888)
@@ -39,16 +46,9 @@ class Mask:
         if not self.w or not self.h:
             return
         x, y, w, h = self.x, self.y, self.w, self.h
-        # get color image
-        # cv2.imshow('cvimage', cvImage)
-        # cv2.waitKey(0)
         self.cvColorImage = cvImage[y:y + h, x:x + w, :].copy()
-        # cv2.imshow('colorimage', self.cvColorImage)
-        # generate gray image
         self.cvGrayImage = cv2.cvtColor(self.cvColorImage, cv2.COLOR_BGR2GRAY)
-        # generate binary image
         _, self.binaryImage = cv2.threshold(self.cvGrayImage, self.binaryThreshold, 255, cv2.THRESH_BINARY)
-        # generate pixmap
         rgbImage = cv2.cvtColor(self.binaryImage, cv2.COLOR_GRAY2RGB)
         image = QtGui.QImage(rgbImage, rgbImage.shape[1], rgbImage.shape[0], rgbImage.shape[1] * 3,
                              QtGui.QImage.Format_RGB888)
@@ -68,7 +68,12 @@ class Mask:
             'w': self.w,
             'h': self.h,
             'name': self.name,
-            'binaryThreshold': self.binaryThreshold})
+            'binaryThreshold': self.binaryThreshold,
+            "round":self.round,
+            "reverse":self.reverse,
+            "radius":self.radius,
+            "meter":self.meter}
+        )
         return data
 
     @staticmethod
@@ -80,6 +85,10 @@ class Mask:
         obj.h = jsondata['h']
         obj.name = jsondata['name']
         obj.binaryThreshold = jsondata['binaryThreshold']
+        obj.round= jsondata['round']
+        obj.reverse= jsondata['reverse']
+        obj.radius= jsondata['radius']
+        obj.meter= jsondata['meter']
         return obj
 
     @staticmethod
@@ -91,4 +100,8 @@ class Mask:
         obj.h = jsondata.h
         obj.name = 'mask_%s' % (name + 1)
         obj.binaryThreshold = jsondata.binaryThreshold
+        obj.round= jsondata.round
+        obj.reverse= jsondata.reverse
+        obj.radius= jsondata.radius
+        obj.meter= jsondata.meter
         return obj

@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt, QLineF, QPointF, QPoint
-from PyQt5.QtGui import QBrush
+from PyQt5.QtGui import QBrush, QPainter
 from qtpy import QtCore
 from qtpy import QtGui
 from qtpy import QtWidgets
@@ -108,7 +108,7 @@ class Canvas(QtWidgets.QWidget):
         # 复制
         self._copy = None
         self.copy_shape = None
-
+        self.colox = []
     def delete_shape_action_clicked(self):
         if not self.hShape and not self.selectedShapes:
             return
@@ -523,27 +523,15 @@ class Canvas(QtWidgets.QWidget):
             pen = QtGui.QPen()
             self.current.paint(p)
             self.line.paint(p)
+
         # 绘制箭头
-        # if self.shape_type == 'pos_neg' and len(self.shapes) == 2 :
-        #     pen = QtGui.QPen(Qt.yellow)
+        # if self.shape_type == 'pos_neg' :
+        #     pen = QtGui.QPen(Qt.yellow,4)
         #     p.setPen(pen)
         #     brush = QBrush()
         #     brush.setColor(Qt.yellow)
-        #     brush.setStyle(Qt.SolidPattern)
-        #     p.setBrush(brush)
-        #     li = QLineF(self.arrow_start, self.arrow_end)
-        #     li.setLength(li.length())
-        #     v = li.unitVector()
-        #     v.setLength(5)
-        #     v.translate(QPointF(li.dx(), li.dy()))
-        #     n = v.normalVector()
-        #     n.setLength(n.length() * 0.5)
-        #     n2 = n.normalVector().normalVector()
-        #     p1 = v.p2()
-        #     p2 = n.p2()
-        #     p3 = n2.p2()
-        #     p.drawLine(li)
-        #     p.drawPolygon(p1, p2, p3)
+        #     p.drawRect(self.colox[0],self.colox[1],self.colox[2],self.colox[3])
+
 
         p.end()
 

@@ -1,5 +1,4 @@
 from PyQt5 import QtCore, QtWidgets
-from PyQt5.QtCore import pyqtSignal
 from PyQt5 import QtGui
 from template_widget2 import Ui_Form
 import cv2

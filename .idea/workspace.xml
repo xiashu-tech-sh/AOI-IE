@@ -2,21 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cc9c2d02-46f4-4d2a-af37-e95964256136" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/online_widget1.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/qt_chick_identification.py" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/test.jpg" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ui/edit_widget.ui" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/ui/edit_widget_ui.py" afterPath="" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/icon/color_image.jpg" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ui/ceshi.py" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/ui/edit_label.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/logs/tst.log.1" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/logs/tst.log.2" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/logs/tst.log.3" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/logs/tst.log.4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/logs/tst.log.5" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/canvas.py" afterPath="$PROJECT_DIR$/canvas.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.py" afterPath="$PROJECT_DIR$/main.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/my_label.py" afterPath="$PROJECT_DIR$/my_label.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/online_widget.py" afterPath="$PROJECT_DIR$/online_widget.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/part.py" afterPath="$PROJECT_DIR$/part.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pattern.py" afterPath="$PROJECT_DIR$/pattern.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/logs/tst.log" afterPath="$PROJECT_DIR$/logs/tst.log" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/mask.py" afterPath="$PROJECT_DIR$/mask.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pattern_widget.py" afterPath="$PROJECT_DIR$/pattern_widget.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/template.py" afterPath="$PROJECT_DIR$/template.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ui/edit_widget.py" afterPath="$PROJECT_DIR$/ui/edit_widget.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/shape.py" afterPath="$PROJECT_DIR$/shape.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ui/mask_widget.py" afterPath="$PROJECT_DIR$/ui/mask_widget.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ui/mask_widget_ui.py" afterPath="$PROJECT_DIR$/ui/mask_widget_ui.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ui/part_widget.py" afterPath="$PROJECT_DIR$/ui/part_widget.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/ui/template_widget.py" afterPath="$PROJECT_DIR$/ui/template_widget.py" />
     </list>
@@ -36,12 +37,16 @@
     <SUITE FILE_PATH="coverage/src$demo4.coverage" NAME="demo4 Coverage Results" MODIFIED="1612161263987" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/src$baidu_jiashiyuan.coverage" NAME="baidu_jiashiyuan Coverage Results" MODIFIED="1601443437610" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="E:/XS_caiji" />
     <SUITE FILE_PATH="coverage/src$online_widget.coverage" NAME="online_widget Coverage Results" MODIFIED="1608709297555" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AOI_IE$demo.coverage" NAME="demo Coverage Results" MODIFIED="1612246791736" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/src$aaa.coverage" NAME="aaa Coverage Results" MODIFIED="1604916108419" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="E:/hand" />
     <SUITE FILE_PATH="coverage/src$demo2.coverage" NAME="demo2 Coverage Results" MODIFIED="1609985893289" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/src$imag.coverage" NAME="imag Coverage Results" MODIFIED="1603443356542" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="E:/XS_caiji" />
     <SUITE FILE_PATH="coverage/src$333.coverage" NAME="333 Coverage Results" MODIFIED="1603360696329" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="E:/XS_caiji" />
+    <SUITE FILE_PATH="coverage/AOI_IE$demo2.coverage" NAME="demo2 Coverage Results" MODIFIED="1612496175321" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/src$part_widget.coverage" NAME="part_widget Coverage Results" MODIFIED="1608017716847" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/ui" />
     <SUITE FILE_PATH="coverage/src$open_demo.coverage" NAME="open_demo Coverage Results" MODIFIED="1601023992905" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AOI_IE$main.coverage" NAME="main Coverage Results" MODIFIED="1612690476319" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/AOI_IE$demo3.coverage" NAME="demo3 Coverage Results" MODIFIED="1612666566077" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/src$2.coverage" NAME="测试2 Coverage Results" MODIFIED="1608257865643" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/src$main.coverage" NAME="main Coverage Results" MODIFIED="1612144677372" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/src$2222.coverage" NAME="2222 Coverage Results" MODIFIED="1604472291099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="E:/XS_caiji" />
@@ -51,6 +56,7 @@
     <SUITE FILE_PATH="coverage/src$vvllcc.coverage" NAME="vvllcc Coverage Results" MODIFIED="1604658352084" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="E:/XS_caiji/driver" />
     <SUITE FILE_PATH="coverage/src$demo3.coverage" NAME="demo3 Coverage Results" MODIFIED="1610959978050" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/src$ddd.coverage" NAME="ddd Coverage Results" MODIFIED="1604890828280" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="E:/hand/ocr_ui" />
+    <SUITE FILE_PATH="coverage/AOI_IE$demo4.coverage" NAME="demo4 Coverage Results" MODIFIED="1612496834835" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/src$t2.coverage" NAME="t2 Coverage Results" MODIFIED="1603244235904" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="E:/XS_caiji" />
     <SUITE FILE_PATH="coverage/src$tenso.coverage" NAME="tenso Coverage Results" MODIFIED="1604541386926" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="E:/XS_caiji" />
     <SUITE FILE_PATH="coverage/src$qt_chick_identification.coverage" NAME="qt_chick_identification Coverage Results" MODIFIED="1610077810222" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -62,64 +68,134 @@
     <SUITE FILE_PATH="coverage/src$video_5.coverage" NAME="video_5 Coverage Results" MODIFIED="1611134862938" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="E:/Ai_data/deep_sort_yolov3" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="online_widget.py" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/online_widget.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="18883">
-              <caret line="821" column="43" lean-forward="false" selection-start-line="821" selection-start-column="35" selection-end-line="821" selection-end-column="43" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pattern_widget.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pattern_widget.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/main.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="322">
-              <caret line="94" column="55" lean-forward="false" selection-start-line="94" selection-start-column="55" selection-end-line="94" selection-end-column="55" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="part_widget.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/ui/part_widget.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="230">
-              <caret line="10" column="29" lean-forward="false" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="my_label.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/my_label.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#50#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <splitter split-orientation="horizontal" split-proportion="0.6557692">
+      <split-first>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
+          <file leaf-file-name="template_widget.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/ui/template_widget.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-89">
+                  <caret line="148" column="64" lean-forward="true" selection-start-line="148" selection-start-column="64" selection-end-line="148" selection-end-column="64" />
+                  <folding>
+                    <element signature="e#0#35#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="mask.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/mask.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-736">
+                  <caret line="26" column="32" lean-forward="false" selection-start-line="26" selection-start-column="8" selection-end-line="26" selection-end-column="32" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="part_widget.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/ui/part_widget.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="6417">
+                  <caret line="1324" column="60" lean-forward="true" selection-start-line="1324" selection-start-column="60" selection-end-line="1324" selection-end-column="60" />
+                  <folding>
+                    <element signature="e#0#9#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="info.json" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/P/pcb_demo/info.json">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-1863">
+                  <caret line="39" column="12" lean-forward="false" selection-start-line="39" selection-start-column="12" selection-end-line="39" selection-end-column="12" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="mask_widget.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/ui/mask_widget.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="759">
+                  <caret line="33" column="44" lean-forward="false" selection-start-line="33" selection-start-column="44" selection-end-line="33" selection-end-column="44" />
+                  <folding>
+                    <element signature="e#0#35#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="pattern_widget.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/pattern_widget.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="213">
+                  <caret line="500" column="38" lean-forward="false" selection-start-line="500" selection-start-column="38" selection-end-line="500" selection-end-column="38" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="pattern.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/pattern.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="414">
+                  <caret line="70" column="37" lean-forward="false" selection-start-line="70" selection-start-column="33" selection-end-line="70" selection-end-column="37" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="mask_widget_ui.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/ui/mask_widget_ui.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="177">
+                  <caret line="61" column="21" lean-forward="false" selection-start-line="61" selection-start-column="21" selection-end-line="61" selection-end-column="21" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/main.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="155">
+                  <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
+          <file leaf-file-name="canvas.py" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/canvas.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="437">
+                  <caret line="19" column="38" lean-forward="true" selection-start-line="19" selection-start-column="38" selection-end-line="19" selection-end-column="38" />
+                  <folding>
+                    <element signature="e#0#52#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="my_label.py" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/my_label.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="276">
+                  <caret line="20" column="36" lean-forward="false" selection-start-line="20" selection-start-column="36" selection-end-line="20" selection-end-column="37" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -130,23 +206,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>pushButton_5</find>
-      <find>lower</find>
-      <find>setCurrentIndex(3)</find>
-      <find>capacitorAction</find>
-      <find>findContours</find>
-      <find>cap_color_diff</find>
-      <find>comp_color</find>
-      <find>setStepType</find>
-      <find>COLOR_BGR2HSV</find>
-      <find>horizontalSlider_2</find>
-      <find>pushButton_19</find>
-      <find>detect</find>
-      <find>set_value</find>
-      <find>pushButton_3</find>
-      <find>rotation_angle</find>
-      <find>T</find>
-      <find>checkItems</find>
       <find>load_image</find>
       <find>zoom_size</find>
       <find>w_or_h</find>
@@ -158,8 +217,25 @@
       <find>0.7</find>
       <find>pushButton_4</find>
       <find>NG</find>
-      <find>horizontalSlider</find>
       <find>diode_value</find>
+      <find>horizontalSlider_2</find>
+      <find>pcb_color_2</find>
+      <find>comp_color</find>
+      <find>label_5</find>
+      <find>templateAction</find>
+      <find>getCircleButton</find>
+      <find>self.pattern</find>
+      <find>rgb2hsv</find>
+      <find>setStepType</find>
+      <find>horizontalSlider</find>
+      <find>pushButton_3</find>
+      <find>转换</find>
+      <find>binaryImage</find>
+      <find>saveButton</find>
+      <find>binaryThreshold</find>
+      <find>threshSlider</find>
+      <find>reverseCheckBox</find>
+      <find>parameterChanged</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -170,30 +246,38 @@
       <list>
         <option value="$PROJECT_DIR$/ui/part_widget_ui.py" />
         <option value="$PROJECT_DIR$/测试3.py" />
-        <option value="$PROJECT_DIR$/demo.py" />
         <option value="$PROJECT_DIR$/P/p6/info.json" />
-        <option value="$PROJECT_DIR$/demo2.py" />
         <option value="$PROJECT_DIR$/P/p9/info.json" />
         <option value="$PROJECT_DIR$/my_label.py" />
         <option value="$PROJECT_DIR$/P/pcv_demo5/info.json" />
         <option value="$PROJECT_DIR$/P/pcv_demo2/info.json" />
-        <option value="$PROJECT_DIR$/demo3.py" />
         <option value="$PROJECT_DIR$/number_recognition.py" />
         <option value="$PROJECT_DIR$/template.py" />
         <option value="$PROJECT_DIR$/part.py" />
         <option value="$PROJECT_DIR$/qt_chick_identification.py" />
-        <option value="$PROJECT_DIR$/ui/template_widget.py" />
-        <option value="$PROJECT_DIR$/canvas.py" />
-        <option value="$PROJECT_DIR$/pattern_widget.py" />
-        <option value="$PROJECT_DIR$/ui/ceshi.py" />
         <option value="$PROJECT_DIR$/logs/lo" />
         <option value="$PROJECT_DIR$/logs/tst.log" />
         <option value="$PROJECT_DIR$/main.py" />
         <option value="$PROJECT_DIR$/P/pcv_demo4/info.json" />
         <option value="$PROJECT_DIR$/online_widget.py" />
         <option value="$PROJECT_DIR$/demo6.py" />
+        <option value="$PROJECT_DIR$/demo.py" />
+        <option value="$PROJECT_DIR$/ui/edit_label.py" />
+        <option value="$PROJECT_DIR$/rgb2hsv.py" />
+        <option value="$PROJECT_DIR$/hsvTRGB.py" />
+        <option value="$PROJECT_DIR$/ui/ceshi.py" />
+        <option value="$PROJECT_DIR$/demo2.py" />
         <option value="$PROJECT_DIR$/demo4.py" />
+        <option value="$PROJECT_DIR$/shape.py" />
+        <option value="$PROJECT_DIR$/canvas.py" />
         <option value="$PROJECT_DIR$/ui/part_widget.py" />
+        <option value="$PROJECT_DIR$/ui/template_widget.py" />
+        <option value="$PROJECT_DIR$/demo3.py" />
+        <option value="$PROJECT_DIR$/ui/mask_widget_ui.py" />
+        <option value="$PROJECT_DIR$/P/pcb_demo/info.json" />
+        <option value="$PROJECT_DIR$/pattern_widget.py" />
+        <option value="$PROJECT_DIR$/ui/mask_widget.py" />
+        <option value="$PROJECT_DIR$/mask.py" />
       </list>
     </option>
   </component>
@@ -203,9 +287,9 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="53" />
-    <option name="y" value="1" />
+  <component name="ProjectFrameBounds" extendedState="7">
+    <option name="x" value="1042" />
+    <option name="y" value="38" />
     <option name="width" value="942" />
     <option name="height" value="1048" />
   </component>
@@ -225,8 +309,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -238,6 +320,8 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="ProjectViewState">
@@ -251,18 +335,18 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\XSKJ180301\src\AOI-IE\ui" />
+      <recent name="E:\XSKJ180301\src\AOI-IE" />
+      <recent name="E:\XSKJ180301\src\AOI-IE\P" />
       <recent name="E:\XSKJ180301\wrong_leak_anti\src\ui" />
       <recent name="E:\XSKJ180301\wrong_leak_anti\src\icon" />
-      <recent name="E:\XSKJ180301\wrong_leak_anti\src" />
-      <recent name="E:\data\src\p\p1" />
-      <recent name="E:\data\src" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\XSKJ180301\src\AOI-IE\icon" />
       <recent name="E:\XSKJ180301\wrong_leak_anti\src" />
       <recent name="E:\data\src" />
       <recent name="E:\hand" />
       <recent name="E:\XS_caiji\driver" />
-      <recent name="E:\XS_caiji\minisite" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -277,7 +361,43 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.demo4">
+  <component name="RunManager" selected="Python.demo3">
+    <configuration name="demo" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="src" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/demo.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="demo2" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="src" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/demo2.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
     <configuration name="demo3" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -314,24 +434,6 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
     </configuration>
-    <configuration name="demo6" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="src" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/demo6.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -350,38 +452,20 @@
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
     </configuration>
-    <configuration name="number_recognition" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="src" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/number_recognition.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
     <list size="5">
       <item index="0" class="java.lang.String" itemvalue="Python.main" />
-      <item index="1" class="java.lang.String" itemvalue="Python.demo3" />
-      <item index="2" class="java.lang.String" itemvalue="Python.demo4" />
-      <item index="3" class="java.lang.String" itemvalue="Python.demo6" />
-      <item index="4" class="java.lang.String" itemvalue="Python.number_recognition" />
+      <item index="1" class="java.lang.String" itemvalue="Python.demo4" />
+      <item index="2" class="java.lang.String" itemvalue="Python.demo" />
+      <item index="3" class="java.lang.String" itemvalue="Python.demo2" />
+      <item index="4" class="java.lang.String" itemvalue="Python.demo3" />
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.demo4" />
-        <item index="1" class="java.lang.String" itemvalue="Python.main" />
-        <item index="2" class="java.lang.String" itemvalue="Python.demo6" />
-        <item index="3" class="java.lang.String" itemvalue="Python.number_recognition" />
-        <item index="4" class="java.lang.String" itemvalue="Python.demo3" />
+        <item index="0" class="java.lang.String" itemvalue="Python.main" />
+        <item index="1" class="java.lang.String" itemvalue="Python.demo3" />
+        <item index="2" class="java.lang.String" itemvalue="Python.demo4" />
+        <item index="3" class="java.lang.String" itemvalue="Python.demo2" />
+        <item index="4" class="java.lang.String" itemvalue="Python.demo" />
       </list>
     </recent_temporary>
   </component>
@@ -400,20 +484,19 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-9" y="-9" width="1938" height="1048" extended-state="6" />
-    <editor active="true" />
+    <frame x="-9" y="-9" width="1938" height="1048" extended-state="7" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.34166667" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.1875" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35964912" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.23464912" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3991228" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3991228" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -491,13 +574,23 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/ui/part_widget.py</url>
-          <line>857</line>
+          <line>940</line>
           <option name="timeStamp" value="4" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/ui/part_widget.py</url>
-          <line>946</line>
+          <line>1027</line>
           <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/ui/part_widget.py</url>
+          <line>327</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/pattern_widget.py</url>
+          <line>635</line>
+          <option name="timeStamp" value="8" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -507,240 +600,241 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="7" />
+      <option name="time" value="9" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/100.jpg" />
-    <entry file="file://$PROJECT_DIR$/0.jpg" />
-    <entry file="file://$PROJECT_DIR$/00.jpg" />
-    <entry file="file://$PROJECT_DIR$/save_image/part_4/temp.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/P/pcv_demo4/part_2.jpg" />
-    <entry file="file://$PROJECT_DIR$/P/pcv_demo4/part_4.jpg" />
-    <entry file="file://$PROJECT_DIR$/save_image/part_4/new_tep.jpg" />
-    <entry file="file://$PROJECT_DIR$/2.jpg" />
-    <entry file="file://$PROJECT_DIR$/1.jpg" />
-    <entry file="file://$PROJECT_DIR$/P/pcv_demo4/info.json" />
-    <entry file="file://$PROJECT_DIR$/rowe1.jpg" />
-    <entry file="file://$PROJECT_DIR$/rowe.jpg" />
-    <entry file="file://$PROJECT_DIR$/save_image/new_pcv.jpg" />
-    <entry file="file://$PROJECT_DIR$/save_image/newtem.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/save_image/org_pcb.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/save_image/org_temp.jpg" />
-    <entry file="file://$PROJECT_DIR$/save_image/part_5/temp.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/save_image/part_5/new_tep.jpg" />
-    <entry file="file://$PROJECT_DIR$/save_image/part_5/new_Z.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/save_image/part_5/new_F.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/save_image/part_6/new_Z.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/save_image/part_6/temp.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/save_image/part_6/new_F.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/save_image/part_5/new_F.jpg" />
+    <entry file="file://$PROJECT_DIR$/save_image/part_6/new_Z.jpg" />
+    <entry file="file://$PROJECT_DIR$/save_image/part_6/temp.jpg" />
+    <entry file="file://$PROJECT_DIR$/save_image/part_6/new_F.jpg" />
     <entry file="file://$PROJECT_DIR$/save_image/part_6/new_tep.jpg" />
-    <entry file="file://$PROJECT_DIR$/P/pcb_demo2/part_1.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/P/pcb_demo2/part_2.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/P/pcb_demo2/part_3.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_5.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_9.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_14.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_13.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ui/template_widget.py">
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo2/part_1.jpg" />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo2/part_2.jpg" />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo2/part_3.jpg" />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_5.jpg" />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_9.jpg" />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_14.jpg" />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_13.jpg" />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_16.jpg" />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_19.jpg" />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo2/template.jpg" />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo/template.jpg" />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo2/image.jpg" />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo2/part_4.jpg" />
+    <entry file="file://$PROJECT_DIR$/demo6.py" />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_22.jpg" />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_21.jpg" />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_20.jpg" />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_23.jpg" />
+    <entry file="file://$PROJECT_DIR$/ui/edit_widget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="44" column="22" lean-forward="false" selection-start-line="44" selection-start-column="22" selection-end-line="44" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#35#0" expanded="false" />
-          </folding>
+        <state relative-caret-position="230">
+          <caret line="10" column="12" lean-forward="false" selection-start-line="10" selection-start-column="12" selection-end-line="10" selection-end-column="12" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_16.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/template.py">
+    <entry file="file://$PROJECT_DIR$/ui/edit_label.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="17" column="25" lean-forward="false" selection-start-line="17" selection-start-column="13" selection-end-line="17" selection-end-column="25" />
+        <state relative-caret-position="261">
+          <caret line="16" column="25" lean-forward="false" selection-start-line="16" selection-start-column="25" selection-end-line="16" selection-end-column="25" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_19.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_1.jpg" />
+    <entry file="file://$PROJECT_DIR$/rgb2hsv.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="520">
+          <caret line="37" column="18" lean-forward="false" selection-start-line="37" selection-start-column="18" selection-end-line="37" selection-end-column="18" />
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/P/pcb_demo2/template.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_2.jpg" />
+    <entry file="file://$PROJECT_DIR$/hsvTRGB.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="69">
+          <caret line="3" column="8" lean-forward="true" selection-start-line="3" selection-start-column="8" selection-end-line="3" selection-end-column="8" />
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/P/pcb_demo/template.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
+    <entry file="file://$PROJECT_DIR$/online_widget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="11477">
+          <caret line="510" column="0" lean-forward="false" selection-start-line="510" selection-start-column="0" selection-end-line="511" selection-end-column="46" />
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/P/pcb_demo2/image.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
+    <entry file="file://$PROJECT_DIR$/shape.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2162">
+          <caret line="101" column="28" lean-forward="false" selection-start-line="101" selection-start-column="24" selection-end-line="101" selection-end-column="28" />
+          <folding />
+        </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/P/pcb_demo2/part_4.jpg">
+    <entry file="file://$PROJECT_DIR$/ui/ceshi.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="186">
+          <caret line="151" column="13" lean-forward="false" selection-start-line="151" selection-start-column="13" selection-end-line="151" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/0.jpg">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/main.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="94" column="55" lean-forward="false" selection-start-line="94" selection-start-column="55" selection-end-line="94" selection-end-column="55" />
+        <state relative-caret-position="155">
+          <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/demo6.py">
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_6.jpg">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/template.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="897">
-          <caret line="39" column="42" lean-forward="false" selection-start-line="39" selection-start-column="42" selection-end-line="39" selection-end-column="42" />
+        <state relative-caret-position="222">
+          <caret line="23" column="8" lean-forward="false" selection-start-line="23" selection-start-column="8" selection-end-line="23" selection-end-column="8" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_2.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_20.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_21.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/P/pcb_demo/part_23.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/demo4.py">
+    <entry file="file://E:/Anaconda/envs/kaga/Lib/site-packages/PyQt5/QtCore.pyi">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="391">
-          <caret line="17" column="69" lean-forward="false" selection-start-line="17" selection-start-column="69" selection-end-line="17" selection-end-column="69" />
+        <state relative-caret-position="222">
+          <caret line="1656" column="8" lean-forward="false" selection-start-line="1656" selection-start-column="8" selection-end-line="1656" selection-end-column="8" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ui/mask_widget_ui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="177">
+          <caret line="61" column="21" lean-forward="false" selection-start-line="61" selection-start-column="21" selection-end-line="61" selection-end-column="21" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pattern.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="70" column="37" lean-forward="false" selection-start-line="70" selection-start-column="33" selection-end-line="70" selection-end-column="37" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ui/template_widget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-89">
+          <caret line="148" column="64" lean-forward="true" selection-start-line="148" selection-start-column="64" selection-end-line="148" selection-end-column="64" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pattern_widget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="213">
+          <caret line="500" column="38" lean-forward="false" selection-start-line="500" selection-start-column="38" selection-end-line="500" selection-end-column="38" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mask.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-736">
+          <caret line="26" column="32" lean-forward="false" selection-start-line="26" selection-start-column="8" selection-end-line="26" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/P/pcb_demo/info.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1863">
+          <caret line="39" column="12" lean-forward="false" selection-start-line="39" selection-start-column="12" selection-end-line="39" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ui/mask_widget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="759">
+          <caret line="33" column="44" lean-forward="false" selection-start-line="33" selection-start-column="44" selection-end-line="33" selection-end-column="44" />
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="966">
+          <caret line="52" column="7" lean-forward="false" selection-start-line="52" selection-start-column="7" selection-end-line="52" selection-end-column="7" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="46">
+          <caret line="4" column="5" lean-forward="false" selection-start-line="4" selection-start-column="5" selection-end-line="4" selection-end-column="48" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/ui/part_widget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="10" column="29" lean-forward="false" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ui/edit_widget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="230">
-          <caret line="10" column="6" lean-forward="false" selection-start-line="10" selection-start-column="6" selection-end-line="10" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pattern_widget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        <state relative-caret-position="6417">
+          <caret line="1324" column="60" lean-forward="true" selection-start-line="1324" selection-start-column="60" selection-end-line="1324" selection-end-column="60" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/canvas.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="437">
+          <caret line="19" column="38" lean-forward="true" selection-start-line="19" selection-start-column="38" selection-end-line="19" selection-end-column="38" />
+          <folding>
+            <element signature="e#0#52#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo3.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="248">
+          <caret line="33" column="0" lean-forward="true" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/my_label.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#50#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="276">
+          <caret line="20" column="36" lean-forward="false" selection-start-line="20" selection-start-column="36" selection-end-line="20" selection-end-column="37" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/online_widget.py">
+    <entry file="file://$PROJECT_DIR$/demo4.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="18883">
-          <caret line="821" column="43" lean-forward="false" selection-start-line="821" selection-start-column="35" selection-end-line="821" selection-end-column="43" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-1845">
+          <caret line="8" column="13" lean-forward="true" selection-start-line="8" selection-start-column="13" selection-end-line="8" selection-end-column="13" />
+          <folding />
         </state>
       </provider>
     </entry>
