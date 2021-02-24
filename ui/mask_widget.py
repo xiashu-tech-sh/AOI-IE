@@ -113,7 +113,10 @@ class MaskWidget(QtWidgets.QWidget, Ui_Form):
             self.update_listwidget()
             count = self.listWidget.count()
             self.listWidget.setCurrentRow(count - 1)
-            self.threshSlider.setValue(0)
+            self.threshSlider.setValue(self.currentMask.binaryThreshold)
+            self.reverseCheckBox.setChecked(False)
+            self.label.setText(str(self.currentMask.binaryThreshold))
+            self.label_6.setText("")
         else:  # 修改, TODO
             pass
             # self.savePatternSignal.emit()

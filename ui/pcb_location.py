@@ -11,7 +11,7 @@ class PCBLocationWidget(QtWidgets.QWidget, Ui_Form):
         super().__init__()
         self.setupUi(self)
         # 初始化
-        self.clear()
+        # self.clear()
         self.savePCBButton.clicked.connect(self.save_pcb_button_clicked)
 
     def clear(self):
@@ -31,6 +31,7 @@ class PCBLocationWidget(QtWidgets.QWidget, Ui_Form):
 
 
     def update_pixmap_show(self):
+        print("self.pcbLabel.size()",self.pcbLabel.size())
         if self.pcbImage:
             pixmap = self.pcbImage.scaled(self.pcbLabel.size(), QtCore.Qt.KeepAspectRatio)
             self.pcbLabel.setPixmap(pixmap)

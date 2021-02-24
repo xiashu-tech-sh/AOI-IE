@@ -1,0 +1,148 @@
+{
+  "folder": "E:/XSKJ180301/wrong_leak_anti/AOI-IE/P/pcb_demo",
+  "ax_pcbs": [
+    220,
+    333,
+    2581,
+    2050
+  ],
+  "templates": [
+    {
+      "x": 161,
+      "y": 219,
+      "w": 197,
+      "h": 200,
+      "name": "template_1",
+      "threshold": [
+        [
+          16,
+          43,
+          46
+        ],
+        [
+          34,
+          255,
+          255
+        ]
+      ],
+      "combox_index": 2
+    },
+    {
+      "x": 1068,
+      "y": 985,
+      "w": 268,
+      "h": 253,
+      "name": "template_2",
+      "threshold": [
+        [
+          100,
+          43,
+          46
+        ],
+        [
+          124,
+          255,
+          255
+        ]
+      ],
+      "combox_index": 1
+    },
+    {
+      "x": 1093,
+      "y": 1545,
+      "w": 266,
+      "h": 364,
+      "name": "template_3",
+      "threshold": [
+        [
+          156,
+          43,
+          46
+        ],
+        [
+          180,
+          255,
+          255
+        ]
+      ],
+      "combox_index": 0
+    },
+    {
+      "x": 1762,
+      "y": 1192,
+      "w": 145,
+      "h": 325,
+      "name": "template_4",
+      "threshold": [
+        [
+          26,
+          43,
+          46
+        ],
+        [
+          34,
+          255,
+          255
+        ]
+      ],
+      "combox_index": 2
+    }
+  ],
+  "masks": [
+    {
+      "x": 478,
+      "y": 1793,
+      "w": 140,
+      "h": 150,
+      "name": "mask_1",
+      "binaryThreshold": 16,
+      "round": [
+        72,
+        79
+      ],
+      "reverse": true,
+      "radius": 32,
+      "meter": [
+        10,
+        50
+      ]
+    },
+    {
+      "x": 2006,
+      "y": 1272,
+      "w": 188,
+      "h": 186,
+      "name": "mask_2",
+      "binaryThreshold": 100,
+      "round": [
+        87,
+        71
+      ],
+      "reverse": false,
+      "radius": 45,
+      "meter": [
+        10,
+        50
+      ]
+    },
+    {
+      "x": 2271,
+      "y": 115,
+      "w": 133,
+      "h": 136,
+      "name": "mask_3",
+      "binaryThreshold": 38,
+      "round": [
+        58,
+        76
+      ],
+      "reverse": true,
+      "radius": 36,
+      "meter": [
+        10,
+        50
+      ]
+    }
+  ],
+  "parts": []
+}

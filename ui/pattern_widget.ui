@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1189</width>
+    <height>838</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>全自动光学检测系统-夏数科技</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../icon/icon.qrc">
+    <normaloff>:/toolbar/xiashu.png</normaloff>:/toolbar/xiashu.png</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_5">
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="2,1">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0">
+        <item>
+         <widget class="QScrollArea" name="scrollArea">
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(0, 0, 0)</string>
+          </property>
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>768</width>
+             <height>732</height>
+            </rect>
+           </property>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" name="verticalLayout_2" stretch="1,1">
+        <item>
+         <widget class="QTabWidget" name="rightTopArea">
+          <property name="font">
+           <font>
+            <family>微软雅黑</family>
+            <pointsize>11</pointsize>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="currentIndex">
+           <number>-1</number>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QTabWidget" name="rightUnderArea">
+          <property name="font">
+           <font>
+            <family>微软雅黑</family>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
+          <property name="currentIndex">
+           <number>0</number>
+          </property>
+          <widget class="QWidget" name="tab_6">
+           <attribute name="title">
+            <string>相机播放</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(0, 0, 0)</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+          <widget class="QWidget" name="tab_7">
+           <attribute name="title">
+            <string>程式制作</string>
+           </attribute>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <layout class="QGridLayout" name="gridLayout">
+                <item row="1" column="3">
+                 <widget class="QPushButton" name="pushButton">
+                  <property name="text">
+                   <string>搜索</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QPushButton" name="pushButton_2">
+                  <property name="text">
+                   <string>搜索</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="3">
+                 <widget class="QLabel" name="label_3">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="text">
+                   <string>类型：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QLineEdit" name="lineEdit"/>
+                </item>
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_2">
+                  <property name="enabled">
+                   <bool>false</bool>
+                  </property>
+                  <property name="accessibleName">
+                   <string notr="true"/>
+                  </property>
+                  <property name="accessibleDescription">
+                   <string notr="true"/>
+                  </property>
+                  <property name="text">
+                   <string>料号：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="4">
+                 <widget class="QLineEdit" name="lineEdit_2"/>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QGroupBox" name="groupBox">
+                <property name="title">
+                 <string>元件信息</string>
+                </property>
+                <layout class="QFormLayout" name="formLayout">
+                 <item row="0" column="1">
+                  <widget class="QListView" name="listView"/>
+                 </item>
+                </layout>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>11</pointsize>
+    </font>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>40</width>
+     <height>40</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="createAction"/>
+   <addaction name="saveAction"/>
+   <addaction name="openAction"/>
+   <addaction name="separator"/>
+   <addaction name="captureAction"/>
+   <addaction name="zoomInAction"/>
+   <addaction name="zoomOutAction"/>
+   <addaction name="cursorAction"/>
+   <addaction name="separator"/>
+   <addaction name="pcbLocationAction"/>
+   <addaction name="templateAction"/>
+   <addaction name="capacitorAction"/>
+   <addaction name="maskAction"/>
+   <addaction name="resistorAction"/>
+   <addaction name="slotAction"/>
+   <addaction name="diodeAction"/>
+   <addaction name="componentAction"/>
+   <addaction name="separator"/>
+   <addaction name="homeAction"/>
+  </widget>
+  <action name="createAction">
+   <property name="icon">
+    <iconset resource="../icon/icon.qrc">
+     <normaloff>:/toolbar/create-100.png</normaloff>:/toolbar/create-100.png</iconset>
+   </property>
+   <property name="text">
+    <string>新建程式</string>
+   </property>
+   <property name="toolTip">
+    <string>创建程式</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
+   </property>
+  </action>
+  <action name="captureAction">
+   <property name="icon">
+    <iconset resource="../icon/icon.qrc">
+     <normaloff>:/toolbar/cap-64.png</normaloff>:/toolbar/cap-64.png</iconset>
+   </property>
+   <property name="text">
+    <string>抓取图片</string>
+   </property>
+   <property name="toolTip">
+    <string>抓取图片</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="zoomInAction">
+   <property name="icon">
+    <iconset resource="../icon/icon.qrc">
+     <normaloff>:/toolbar/zoom-in-50.png</normaloff>:/toolbar/zoom-in-50.png</iconset>
+   </property>
+   <property name="text">
+    <string>放大</string>
+   </property>
+   <property name="toolTip">
+    <string>放大</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="saveAction">
+   <property name="icon">
+    <iconset resource="../icon/icon.qrc">
+     <normaloff>:/toolbar/save-64.png</normaloff>:/toolbar/save-64.png</iconset>
+   </property>
+   <property name="text">
+    <string>保存程式</string>
+   </property>
+   <property name="toolTip">
+    <string>保存程式</string>
+   </property>
+  </action>
+  <action name="openAction">
+   <property name="icon">
+    <iconset resource="../icon/icon.qrc">
+     <normaloff>:/toolbar/folder-50.png</normaloff>:/toolbar/folder-50.png</iconset>
+   </property>
+   <property name="text">
+    <string>打开程式</string>
+   </property>
+   <property name="toolTip">
+    <string>打开程式</string>
+   </property>
+  </action>
+  <action name="cursorAction">
+   <property name="icon">
+    <iconset resource="../icon/icon.qrc">
+     <normaloff>:/toolbar/cursor-50.png</normaloff>:/toolbar/cursor-50.png</iconset>
+   </property>
+   <property name="text">
+    <string>选择</string>
+   </property>
+   <property name="toolTip">
+    <string>选择</string>
+   </property>
+  </action>
+  <action name="zoomOutAction">
+   <property name="icon">
+    <iconset resource="../icon/icon.qrc">
+     <normaloff>:/toolbar/zoom-out-50.png</normaloff>:/toolbar/zoom-out-50.png</iconset>
+   </property>
+   <property name="text">
+    <string>缩小</string>
+   </property>
+   <property name="toolTip">
+    <string>缩小</string>
+   </property>
+  </action>
+  <action name="pcbLocationAction">
+   <property name="icon">
+    <iconset resource="../icon/icon.qrc">
+     <normaloff>:/toolbar/1_pcb.png</normaloff>:/toolbar/1_pcb.png</iconset>
+   </property>
+   <property name="text">
+    <string>PCB选择</string>
+   </property>
+   <property name="toolTip">
+    <string>PCB选择</string>
+   </property>
+  </action>
+  <action name="templateAction">
+   <property name="icon">
+    <iconset resource="../icon/icon.qrc">
+     <normaloff>:/toolbar/green-flag-50.png</normaloff>:/toolbar/green-flag-50.png</iconset>
+   </property>
+   <property name="text">
+    <string>模板定位</string>
+   </property>
+   <property name="toolTip">
+    <string>模板定位</string>
+   </property>
+  </action>
+  <action name="maskAction">
+   <property name="icon">
+    <iconset resource="../icon/icon.qrc">
+     <normaloff>:/toolbar/mask-50.png</normaloff>:/toolbar/mask-50.png</iconset>
+   </property>
+   <property name="text">
+    <string>Mask</string>
+   </property>
+   <property name="toolTip">
+    <string>Mask</string>
+   </property>
+  </action>
+  <action name="resistorAction">
+   <property name="icon">
+    <iconset resource="../icon/icon.qrc">
+     <normaloff>:/toolbar/resistor.png</normaloff>:/toolbar/resistor.png</iconset>
+   </property>
+   <property name="text">
+    <string>色环电阻</string>
+   </property>
+   <property name="toolTip">
+    <string>色环电阻</string>
+   </property>
+  </action>
+  <action name="capacitorAction">
+   <property name="icon">
+    <iconset resource="../icon/icon.qrc">
+     <normaloff>:/toolbar/capacitor.png</normaloff>:/toolbar/capacitor.png</iconset>
+   </property>
+   <property name="text">
+    <string>电解电容</string>
+   </property>
+   <property name="toolTip">
+    <string>电解电容</string>
+   </property>
+  </action>
+  <action name="slotAction">
+   <property name="icon">
+    <iconset resource="../icon/icon.qrc">
+     <normaloff>:/toolbar/slot.png</normaloff>:/toolbar/slot.png</iconset>
+   </property>
+   <property name="text">
+    <string>插槽</string>
+   </property>
+   <property name="toolTip">
+    <string>插槽</string>
+   </property>
+  </action>
+  <action name="diodeAction">
+   <property name="icon">
+    <iconset resource="../icon/icon.qrc">
+     <normaloff>:/toolbar/diode.png</normaloff>:/toolbar/diode.png</iconset>
+   </property>
+   <property name="text">
+    <string>二极管</string>
+   </property>
+   <property name="toolTip">
+    <string>二极管</string>
+   </property>
+  </action>
+  <action name="componentAction">
+   <property name="icon">
+    <iconset resource="../icon/icon.qrc">
+     <normaloff>:/toolbar/component.png</normaloff>:/toolbar/component.png</iconset>
+   </property>
+   <property name="text">
+    <string>一般元件</string>
+   </property>
+   <property name="toolTip">
+    <string>一般元件</string>
+   </property>
+  </action>
+  <action name="homeAction">
+   <property name="icon">
+    <iconset resource="../icon/icon.qrc">
+     <normaloff>:/toolbar/home-50.png</normaloff>:/toolbar/home-50.png</iconset>
+   </property>
+   <property name="text">
+    <string>检测界面</string>
+   </property>
+   <property name="toolTip">
+    <string>检测界面</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="../icon/icon.qrc"/>
+ </resources>
+ <connections/>
+</ui>

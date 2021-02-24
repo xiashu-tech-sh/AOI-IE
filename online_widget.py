@@ -8,12 +8,14 @@ from PyQt5.QtCore import pyqtSignal
 from my_label import My_label
 from pattern import Pattern
 from utils import cv_imread
-from PyQt5.QtCore import Qt
+from ui.online_widget_ui import Ui_MainWindow
 import logging
 
 logger = logging.getLogger('main.mod.submod')
 logger.debug('检测界面')
-class OnlineWidget(QtWidgets.QWidget):
+
+
+class OnlineWidget(QtWidgets.QMainWindow, Ui_MainWindow):
     ''' 在线检测界面, 包含组件：
         1. 工具栏，提供选择程式、启停、相机操作、程式设计入口等操作；
         2. 左边测试结果显示区域（imageLabel），用于显示检测结果；
@@ -22,82 +24,10 @@ class OnlineWidget(QtWidgets.QWidget):
     '''
     def __init__(self):
         super().__init__()
-        # init actions
-        new_action = lambda icon, text : QtWidgets.QAction(QtGui.QIcon(icon), text)
-        self.patternSelectAction = new_action('./icon/folder-50.png', '选择程式')
-        self.startAction = new_action('./icon/play-64.png', '开始检测')
-        self.stopAction = new_action('./icon/stop-64.png', '停止检测')
-        self.cameraOpenAction = new_action('./icon/camera-50.png', '打开相机')
-        self.cameraCloseAction = new_action('./icon/camera-50-2.png', '关闭相机')
-        self.videoAction = new_action('./icon/video-64.png', '载入视频')
-        self.parameterAction = new_action('./icon/gear-50.png', '参数设置')
-        self.designAction = new_action('./icon/design-64.png', '程式设计')
-
+        self.setupUi(self)
         self.patternSelectAction.triggered.connect(self.load_pattern)
         self.parameterAction.triggered.connect(self.match_template)
         self.stopAction.triggered.connect(self.stop)
-
-
-        # init toolbar
-        self.toolbar = QtWidgets.QToolBar()
-        self.toolbar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
-        self.toolbar.addActions([self.patternSelectAction, self.startAction, self.stopAction])
-        self.toolbar.addSeparator()
-        self.toolbar.addActions([self.cameraOpenAction, self.cameraCloseAction, self.videoAction])
-        self.toolbar.addSeparator()
-        self.toolbar.addActions([self.parameterAction, self.designAction])
-        self.toolbar.setIconSize(QtCore.QSize(32, 32))
-
-        # left center view
-        self.imageLabel = My_label()
-        self.imageLabel.setStyleSheet('background-color: rgb(0, 0, 0);')
-        # self.imageLabel.setStyleSheet('background-color: rgb(0, 0, 0);')
-        # self.imageLabel.setAlignment(QtCore.Qt.AlignCenter)
-
-        # right top view: TODO
-        self.tableWidget =  QtWidgets.QTableWidget()
-        # self.tableWidget.setHorizontalHeaderLabels(['PCB版号','子件名称','检测结果'])   # 水平标题，多列
-        self.tableWidget.setColumnCount(3)
-        self.tableWidget.setRowCount(0)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(0, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(1, item)
-        item = QtWidgets.QTableWidgetItem()
-        self.tableWidget.setHorizontalHeaderItem(2, item)
-        _translate = QtCore.QCoreApplication.translate
-        self.tableWidget.setSelectionBehavior(QtWidgets.QAbstractItemView.SelectRows)
-        self.tableWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
-        item = self.tableWidget.horizontalHeaderItem(0)
-        item.setText(_translate("Form", "PCB版号"))
-        item = self.tableWidget.horizontalHeaderItem(1)
-        item.setText(_translate("Form", "子件名称"))
-        item = self.tableWidget.horizontalHeaderItem(2)
-        item.setText(_translate("Form", "检测结果"))
-        # right buttom view
-        self.videoLabel = QtWidgets.QLabel()
-        self.videoLabel.setStyleSheet('background-color: rgb(0, 0, 0);')
-        self.videoLabel.setAlignment(QtCore.Qt.AlignCenter)
-
-        # right layout
-        rightLayout = QtWidgets.QVBoxLayout()
-        rightLayout.setSpacing(13)
-        rightLayout.addWidget(self.tableWidget, 1)
-
-        rightLayout.addWidget(self.videoLabel, 1)
-
-        hlayout = QtWidgets.QHBoxLayout()
-        hlayout.setSpacing(13)
-        hlayout.addWidget(self.imageLabel, 2)
-        hlayout.addLayout(rightLayout, 1)
-
-        # main layout
-        layout = QtWidgets.QVBoxLayout()
-        layout.setSpacing(13)
-        layout.addWidget(self.toolbar)
-        layout.addLayout(hlayout)
-        self.setLayout(layout)
-
         self.pattern = None
         self.isRunning = False
         self.lastCaptureTime = time.time()  # 上一次抓拍时间，防止同一时刻多次抓拍

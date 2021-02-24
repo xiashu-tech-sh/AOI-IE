@@ -15,7 +15,7 @@ class Mask:
         self.cvColorImage = None  # cv彩色图像
         self.cvGrayImage = None  # cv灰度图
         self.binaryImage = None  # cv二值图
-        self.binaryThreshold = 0  # 二值化阈值
+        self.binaryThreshold = 100  # 二值化阈值
         self.round = None # 圆心坐标点
         self.reverse = False # 是否翻转
         self.radius = None # 半径

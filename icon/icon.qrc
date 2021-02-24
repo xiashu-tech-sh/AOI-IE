@@ -1,0 +1,41 @@
+<RCC>
+  <qresource prefix="toolbar">
+    <file>1_pcb.png</file>
+    <file>basket-50.png</file>
+    <file>camera-50.png</file>
+    <file>camera-50-2.png</file>
+    <file>cap-64.png</file>
+    <file>capacitor.png</file>
+    <file>close-window-50.png</file>
+    <file>close-window-50-2.png</file>
+    <file>color_image.jpg</file>
+    <file>component.png</file>
+    <file>create-100.png</file>
+    <file>cursor-50.png</file>
+    <file>design-64.png</file>
+    <file>diode.png</file>
+    <file>flag-50.png</file>
+    <file>folder-50.png</file>
+    <file>gear-50.png</file>
+    <file>green-flag-50.png</file>
+    <file>hand-50.png</file>
+    <file>home-50.png</file>
+    <file>icon.qrc</file>
+    <file>icons8-video-64.png</file>
+    <file>label-emoji-50.png</file>
+    <file>mask-50.png</file>
+    <file>move-50.png</file>
+    <file>pcb.png</file>
+    <file>play-64.png</file>
+    <file>resistor.png</file>
+    <file>save.png</file>
+    <file>save-64.png</file>
+    <file>slot.png</file>
+    <file>stop-64.png</file>
+    <file>tags-50.png</file>
+    <file>video-64.png</file>
+    <file>xiashu.png</file>
+    <file>zoom-in-50.png</file>
+    <file>zoom-out-50.png</file>
+  </qresource>
+</RCC>

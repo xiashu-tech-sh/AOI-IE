@@ -15,8 +15,7 @@ class Template:
         self.pixmap = None  # pixmap，用于显示
         self.cvColorImage = None  # cv彩色图像
         self.threshold = None  # 匹配颜色阈值
-        self.num_features = None  # 区域矩形A、C 坐标点
-        self.set_value = None  # 颜色阈值，下拉框阈值
+        self.combox_index = 0  # 下拉框索引
 
     def __getitem__(self, index):
         return [self.x, self.y, self.w, self.h][index]
@@ -53,8 +52,7 @@ class Template:
             'h': self.h,
             'name': self.name,
             'threshold': self.threshold,
-            'num_features': self.num_features,
-            'set_value':self.set_value})
+            'combox_index': self.combox_index})
 
         return data
 
@@ -67,8 +65,7 @@ class Template:
         obj.h = jsondata['h']
         obj.name = jsondata['name']
         obj.threshold = jsondata['threshold']
-        obj.num_features = jsondata['num_features']
-        obj.set_value = jsondata['set_value']
+        obj.combox_index = jsondata['combox_index']
         return obj
 
     @staticmethod
@@ -80,6 +77,5 @@ class Template:
         obj.h = jsondata.h
         obj.name = 'template_%s' % (name + 1)
         obj.threshold = jsondata.threshold
-        obj.num_features = jsondata.num_features
-        obj.set_value = jsondata.set_value
+        obj.combox_index = jsondata.combox_index
         return obj
