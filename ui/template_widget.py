@@ -206,11 +206,19 @@ class TemplateWidget(QtWidgets.QWidget, Ui_Form):
         self.previewLabel.setSizePolicy(QtWidgets.QSizePolicy.Ignored, QtWidgets.QSizePolicy.Ignored)
         self.listWidget.currentRowChanged.connect(self.item_changed)
         self.color_comboBox.activated.connect(self.color_uplimit)
+        self.tabWidget.currentChanged['int'].connect(self.tab_index)
         self.currentTemplate = None
         self.templateList = []
-        self.color_upper = [180,255,255]
-        self.color_lower = [156,43,46]
+        self.color_upper = None
+        self.color_lower = None
         self.combox_index = 0
+    def tab_index(self,index):
+        if index == 0:
+            self.color_upper = None
+            self.color_lower = None
+        else:
+            self.color_upper = [180, 255, 255]
+            self.color_lower = [156, 43, 46]
     def save_signal(self):
         self.savePatternSignal.emit(self.currentTemplate.name)
     def color_uplimit(self,index):
@@ -307,7 +315,7 @@ class TemplateWidget(QtWidgets.QWidget, Ui_Form):
             pixmap = QtGui.QPixmap.fromImage(image)
             pixmap = pixmap.scaled(self.previewLabel.size(), QtCore.Qt.KeepAspectRatio)
             self.previewLabel.setPixmap(pixmap)
-            self.update()
+
     def set_template(self, template):
         self.currentTemplate = template
         pixmap = self.currentTemplate.pixmap.scaled(self.previewLabel.size(), QtCore.Qt.KeepAspectRatio)
@@ -335,17 +343,20 @@ class TemplateWidget(QtWidgets.QWidget, Ui_Form):
 
     def update_pixmap_show(self):
         if self.currentTemplate:
-            if self.currentTemplate.threshold:
+            if self.currentTemplate.threshold[0]:
+                self.tabWidget.setCurrentIndex(1)
                 self.color_upper = self.currentTemplate.threshold[1]
                 self.color_lower = self.currentTemplate.threshold[0]
                 self.red_slider.setValue(self.currentTemplate.threshold[0][0])
                 self.green_slider.setValue(self.currentTemplate.threshold[0][1])
                 self.blue_slider.setValue(self.currentTemplate.threshold[0][2])
                 self.color_comboBox.setCurrentIndex(self.currentTemplate.combox_index)
-                self.update()
+
             else:
+                self.tabWidget.setCurrentIndex(0)
                 pixmap = self.currentTemplate.pixmap.scaled(self.previewLabel.size(), QtCore.Qt.KeepAspectRatio)
                 self.previewLabel.setPixmap(pixmap)
+
             self.selectedChanged.emit('template', self.currentTemplate.name)
 
     def save_current(self):
@@ -374,17 +385,22 @@ class TemplateWidget(QtWidgets.QWidget, Ui_Form):
 
     def item_changed(self, rowIndex):
         self.currentTemplate = self.templateList[rowIndex]
-        if self.currentTemplate.threshold:
+        if self.currentTemplate.threshold[0]:
+            self.tabWidget.setCurrentIndex(1)
             self.color_upper = self.currentTemplate.threshold[1]
             self.color_lower = self.currentTemplate.threshold[0]
             self.red_slider.setValue(self.currentTemplate.threshold[0][0])
             self.green_slider.setValue(self.currentTemplate.threshold[0][1])
             self.blue_slider.setValue(self.currentTemplate.threshold[0][2])
             self.color_comboBox.setCurrentIndex(self.currentTemplate.combox_index)
+            self.hsv_display()
+
         else:
+            self.tabWidget.setCurrentIndex(0)
             pixmap = self.currentTemplate.pixmap
             pixmap = pixmap.scaled(self.previewLabel.size(), QtCore.Qt.KeepAspectRatio)
             self.previewLabel.setPixmap(pixmap)
+
         self.selectedChanged.emit('template', self.currentTemplate.name)
 
     def set_current_template_by_name(self, name):

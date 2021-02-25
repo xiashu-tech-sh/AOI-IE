@@ -1,5 +1,5 @@
 {
-  "folder": "E:/XSKJ180301/wrong_leak_anti/AOI-IE/P/pcb_demo",
+  "folder": "E:/XSKJ180301/jiahe/AOI-IE/P/pcb_demo",
   "ax_pcbs": [
     220,
     333,
@@ -75,7 +75,27 @@
       "name": "template_4",
       "threshold": [
         [
-          26,
+          17,
+          43,
+          46
+        ],
+        [
+          124,
+          255,
+          255
+        ]
+      ],
+      "combox_index": 1
+    },
+    {
+      "x": 182,
+      "y": 205,
+      "w": 214,
+      "h": 217,
+      "name": "template_5",
+      "threshold": [
+        [
+          16,
           43,
           46
         ],
@@ -85,7 +105,19 @@
           255
         ]
       ],
-      "combox_index": 2
+      "combox_index": 0
+    },
+    {
+      "x": 514,
+      "y": 153,
+      "w": 152,
+      "h": 134,
+      "name": "template_6",
+      "threshold": [
+        null,
+        null
+      ],
+      "combox_index": 0
     }
   ],
   "masks": [
