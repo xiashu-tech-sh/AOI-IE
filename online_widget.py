@@ -5,7 +5,6 @@ import cv2
 import numpy as np
 from PyQt5 import QtCore, QtWidgets, QtGui
 from PyQt5.QtCore import pyqtSignal
-from my_label import My_label
 from pattern import Pattern
 from utils import cv_imread
 from ui.online_widget_ui import Ui_MainWindow

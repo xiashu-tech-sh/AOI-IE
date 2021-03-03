@@ -64,11 +64,9 @@ class Canvas(QtWidgets.QWidget):
         self.offsets = QtCore.QPoint(), QtCore.QPoint()
         self.scale = 1.0  # 缩放因子，在pattern_widget.py文件中控制
         self.pixmap = None  # 背景图片
-        # self.visible = {}
         self._hideBackround = False
         self.hideBackround = False
         self.hShape = None  # highlight shape
-        # self.prevhShape = None
         self.hVertex = None  # highlight vertext
         # self.prevhVertex = None
         self.hEdge = None  # highlight edge
@@ -86,7 +84,7 @@ class Canvas(QtWidgets.QWidget):
         self.setFocusPolicy(QtCore.Qt.WheelFocus)
         # 存储的numpy格式的图像数据
         self.cvImage = None
-
+        QtWidgets.QShortcut(QtGui.QKeySequence('Esc', ), self, self.setEditing)
         # 若为元器件，需标明当前元器件类型: 'capacitor', 'resistor', 'slot', 'component'
         self.part_type = ''
         # 正极指向负极线段坐标
@@ -176,6 +174,9 @@ class Canvas(QtWidgets.QWidget):
         if not value:  # Create
             self.unHighlight()
             self.deSelectShape()
+        self.current = None
+        self.update()
+        logging.debug("取消绘制")
 
     def unHighlight(self):
         if self.hShape:

@@ -114,10 +114,38 @@
       "h": 134,
       "name": "template_6",
       "threshold": [
-        null,
-        null
+        [
+          16,
+          43,
+          46
+        ],
+        [
+          34,
+          255,
+          255
+        ]
       ],
       "combox_index": 0
+    },
+    {
+      "x": 1341,
+      "y": 1201,
+      "w": 149,
+      "h": 293,
+      "name": "template_7",
+      "threshold": [
+        [
+          100,
+          43,
+          46
+        ],
+        [
+          124,
+          255,
+          255
+        ]
+      ],
+      "combox_index": 2
     }
   ],
   "masks": [
@@ -174,7 +202,572 @@
         10,
         50
       ]
+    },
+    {
+      "x": 482,
+      "y": 138,
+      "w": 107,
+      "h": 127,
+      "name": "mask_4",
+      "binaryThreshold": 22,
+      "round": [
+        60,
+        65
+      ],
+      "reverse": false,
+      "radius": 35,
+      "meter": [
+        10,
+        50
+      ]
     }
   ],
-  "parts": []
+  "parts": [
+    {
+      "partNo": "",
+      "part_type": "capacitor",
+      "x": 823,
+      "y": 451,
+      "w": 186,
+      "h": 194,
+      "name": "part_1",
+      "leak_pos": [
+        [
+          0,
+          0,
+          221
+        ],
+        [
+          180,
+          30,
+          255
+        ]
+      ],
+      "leak_path": "E:/XSKJ180301/jiahe/AOI-IE/P/pcb_demo/part_1.jpg",
+      "leak_similar": "right",
+      "erron_pos": null,
+      "content": null,
+      "rotation_angle": null,
+      "Z_F_pos": [
+        [
+          0,
+          20,
+          37,
+          100
+        ],
+        [
+          120,
+          140,
+          33,
+          116
+        ]
+      ],
+      "Z_F_hold": 41,
+      "Z_gray": 85,
+      "F_gray": 44,
+      "detection_type": [
+        "missing_parts",
+        "extremely_negative"
+      ],
+      "set_value": null
+    },
+    {
+      "partNo": "",
+      "part_type": "capacitor",
+      "x": 1027,
+      "y": 488,
+      "w": 149,
+      "h": 156,
+      "name": "part_2",
+      "leak_pos": [
+        [
+          0,
+          0,
+          221
+        ],
+        [
+          180,
+          30,
+          255
+        ]
+      ],
+      "leak_path": "E:/XSKJ180301/jiahe/AOI-IE/P/pcb_demo/part_2.jpg",
+      "leak_similar": "overall",
+      "erron_pos": null,
+      "content": null,
+      "rotation_angle": null,
+      "Z_F_pos": [
+        [
+          50,
+          70,
+          0,
+          20
+        ],
+        [
+          51,
+          71,
+          103,
+          123
+        ]
+      ],
+      "Z_F_hold": -80,
+      "Z_gray": 47,
+      "F_gray": 127,
+      "detection_type": [
+        "missing_parts",
+        "extremely_negative"
+      ],
+      "set_value": null
+    },
+    {
+      "partNo": "",
+      "part_type": "capacitor",
+      "x": 1393,
+      "y": 292,
+      "w": 267,
+      "h": 267,
+      "name": "part_3",
+      "leak_pos": [
+        [
+          0,
+          0,
+          221
+        ],
+        [
+          180,
+          30,
+          255
+        ]
+      ],
+      "leak_path": "E:/XSKJ180301/jiahe/AOI-IE/P/pcb_demo/part_3.jpg",
+      "leak_similar": "overall",
+      "erron_pos": null,
+      "content": null,
+      "rotation_angle": null,
+      "Z_F_pos": [
+        [
+          0,
+          20,
+          80,
+          100
+        ],
+        [
+          156,
+          176,
+          79,
+          99
+        ]
+      ],
+      "Z_F_hold": -93,
+      "Z_gray": 76,
+      "F_gray": 169,
+      "detection_type": [
+        "missing_parts",
+        "extremely_negative"
+      ],
+      "set_value": null
+    },
+    {
+      "partNo": "",
+      "part_type": "capacitor",
+      "x": 1829,
+      "y": 324,
+      "w": 439,
+      "h": 402,
+      "name": "part_4",
+      "leak_pos": [
+        [
+          0,
+          0,
+          221
+        ],
+        [
+          180,
+          30,
+          255
+        ]
+      ],
+      "leak_path": "E:/XSKJ180301/jiahe/AOI-IE/P/pcb_demo/part_4.jpg",
+      "leak_similar": "",
+      "erron_pos": null,
+      "content": null,
+      "rotation_angle": null,
+      "Z_F_pos": [],
+      "Z_F_hold": null,
+      "Z_gray": null,
+      "F_gray": null,
+      "detection_type": [
+        "missing_parts"
+      ],
+      "set_value": null
+    },
+    {
+      "partNo": "",
+      "part_type": "component",
+      "x": 1061,
+      "y": 989,
+      "w": 255,
+      "h": 229,
+      "name": "part_5",
+      "leak_pos": [
+        20,
+        221,
+        35,
+        226
+      ],
+      "leak_path": "E:/XSKJ180301/jiahe/AOI-IE/P/pcb_demo/part_5.jpg",
+      "leak_similar": "50.0",
+      "erron_pos": null,
+      "content": null,
+      "rotation_angle": null,
+      "Z_F_pos": [],
+      "Z_F_hold": null,
+      "Z_gray": null,
+      "F_gray": null,
+      "detection_type": [
+        "missing_parts"
+      ],
+      "set_value": null
+    },
+    {
+      "partNo": "",
+      "part_type": "capacitor",
+      "x": 1165,
+      "y": 327,
+      "w": 232,
+      "h": 232,
+      "name": "part_6",
+      "leak_pos": [
+        [
+          0,
+          0,
+          221
+        ],
+        [
+          180,
+          30,
+          255
+        ]
+      ],
+      "leak_path": "E:/XSKJ180301/jiahe/AOI-IE/P/pcb_demo/part_6.jpg",
+      "leak_similar": "under",
+      "erron_pos": [
+        61,
+        182,
+        45,
+        143
+      ],
+      "content": "123",
+      "rotation_angle": "172",
+      "Z_F_pos": [
+        [
+          0,
+          20,
+          70,
+          90
+        ],
+        [
+          121,
+          141,
+          48,
+          68
+        ]
+      ],
+      "Z_F_hold": -109,
+      "Z_gray": 41,
+      "F_gray": 150,
+      "detection_type": [
+        "missing_parts",
+        "extremely_negative",
+        "wrong_piece"
+      ],
+      "set_value": null
+    },
+    {
+      "partNo": "",
+      "part_type": "ceramics",
+      "x": 1301,
+      "y": 1167,
+      "w": 198,
+      "h": 370,
+      "name": "part_7",
+      "leak_pos": [],
+      "leak_path": null,
+      "leak_similar": null,
+      "erron_pos": null,
+      "content": null,
+      "rotation_angle": null,
+      "Z_F_pos": [
+        20,
+        317,
+        35,
+        163
+      ],
+      "Z_F_hold": 42,
+      "Z_gray": 0,
+      "F_gray": 110,
+      "detection_type": [
+        ""
+      ],
+      "set_value": null
+    },
+    {
+      "partNo": "",
+      "part_type": "ceramics",
+      "x": 1536,
+      "y": 1175,
+      "w": 128,
+      "h": 330,
+      "name": "part_8",
+      "leak_pos": [
+        32,
+        310,
+        2,
+        116
+      ],
+      "leak_path": null,
+      "leak_similar": 53,
+      "erron_pos": null,
+      "content": null,
+      "rotation_angle": null,
+      "Z_F_pos": [],
+      "Z_F_hold": null,
+      "Z_gray": null,
+      "F_gray": null,
+      "detection_type": [
+        "wrong_piece"
+      ],
+      "set_value": null
+    },
+    {
+      "partNo": "",
+      "part_type": "ceramics",
+      "x": 1707,
+      "y": 1191,
+      "w": 226,
+      "h": 322,
+      "name": "part_9",
+      "leak_pos": [
+        20,
+        287,
+        35,
+        171
+      ],
+      "leak_path": null,
+      "leak_similar": 50,
+      "erron_pos": null,
+      "content": null,
+      "rotation_angle": null,
+      "Z_F_pos": [],
+      "Z_F_hold": null,
+      "Z_gray": null,
+      "F_gray": null,
+      "detection_type": [
+        "wrong_piece"
+      ],
+      "set_value": null
+    },
+    {
+      "partNo": "",
+      "part_type": "ceramics",
+      "x": 1111,
+      "y": 1544,
+      "w": 267,
+      "h": 353,
+      "name": "part_10",
+      "leak_pos": [
+        10,
+        346,
+        33,
+        236
+      ],
+      "leak_path": null,
+      "leak_similar": 21,
+      "erron_pos": null,
+      "content": null,
+      "rotation_angle": null,
+      "Z_F_pos": [],
+      "Z_F_hold": null,
+      "Z_gray": null,
+      "F_gray": null,
+      "detection_type": [
+        "wrong_piece"
+      ],
+      "set_value": null
+    },
+    {
+      "partNo": "",
+      "part_type": "ceramics",
+      "x": 1521,
+      "y": 1200,
+      "w": 194,
+      "h": 316,
+      "name": "part_11",
+      "leak_pos": [
+        20,
+        218,
+        35,
+        161
+      ],
+      "leak_path": null,
+      "leak_similar": 53,
+      "erron_pos": null,
+      "content": null,
+      "rotation_angle": null,
+      "Z_F_pos": [],
+      "Z_F_hold": null,
+      "Z_gray": null,
+      "F_gray": null,
+      "detection_type": [
+        "wrong_piece"
+      ],
+      "set_value": null
+    },
+    {
+      "partNo": "",
+      "part_type": "ceramics",
+      "x": 1130,
+      "y": 1218,
+      "w": 230,
+      "h": 115,
+      "name": "part_12",
+      "leak_pos": [
+        5,
+        106,
+        12,
+        194
+      ],
+      "leak_path": null,
+      "leak_similar": 20,
+      "erron_pos": [
+        9,
+        78,
+        235,
+        2,
+        true
+      ],
+      "content": null,
+      "rotation_angle": null,
+      "Z_F_pos": [],
+      "Z_F_hold": null,
+      "Z_gray": null,
+      "F_gray": null,
+      "detection_type": [
+        "wrong_piece"
+      ],
+      "set_value": null
+    },
+    {
+      "partNo": "",
+      "part_type": "resistor",
+      "x": 1721,
+      "y": 1178,
+      "w": 149,
+      "h": 171,
+      "name": "part_13",
+      "leak_pos": [],
+      "leak_path": null,
+      "leak_similar": null,
+      "erron_pos": null,
+      "content": null,
+      "rotation_angle": null,
+      "Z_F_pos": [],
+      "Z_F_hold": null,
+      "Z_gray": null,
+      "F_gray": null,
+      "detection_type": [],
+      "set_value": null
+    },
+    {
+      "partNo": "",
+      "part_type": "resistor",
+      "x": 1527,
+      "y": 1200,
+      "w": 159,
+      "h": 312,
+      "name": "part_14",
+      "leak_pos": [],
+      "leak_path": null,
+      "leak_similar": null,
+      "erron_pos": null,
+      "content": null,
+      "rotation_angle": null,
+      "Z_F_pos": [],
+      "Z_F_hold": null,
+      "Z_gray": null,
+      "F_gray": null,
+      "detection_type": [],
+      "set_value": null
+    },
+    {
+      "partNo": "",
+      "part_type": "component",
+      "x": 708,
+      "y": 476,
+      "w": 126,
+      "h": 73,
+      "name": "part_15",
+      "leak_pos": [
+        20,
+        100,
+        35,
+        90
+      ],
+      "leak_path": "E:/XSKJ180301/jiahe/AOI-IE/P/pcb_demo/part_15.jpg",
+      "leak_similar": "50.0",
+      "erron_pos": null,
+      "content": null,
+      "rotation_angle": null,
+      "Z_F_pos": [],
+      "Z_F_hold": null,
+      "Z_gray": null,
+      "F_gray": null,
+      "detection_type": [
+        "missing_parts"
+      ],
+      "set_value": null
+    },
+    {
+      "partNo": "",
+      "part_type": "component",
+      "x": 1528,
+      "y": 152,
+      "w": 299,
+      "h": 205,
+      "name": "part_16",
+      "leak_pos": [
+        20,
+        173,
+        35,
+        218
+      ],
+      "leak_path": "E:/XSKJ180301/jiahe/AOI-IE/P/pcb_demo/part_16.jpg",
+      "leak_similar": "50.0",
+      "erron_pos": null,
+      "content": null,
+      "rotation_angle": null,
+      "Z_F_pos": [
+        [
+          0,
+          153,
+          0,
+          25
+        ],
+        [
+          0,
+          153,
+          158,
+          183
+        ]
+      ],
+      "Z_F_hold": 158,
+      "Z_gray": 196,
+      "F_gray": 38,
+      "detection_type": [
+        "missing_parts",
+        "extremely_negative"
+      ],
+      "set_value": null
+    }
+  ]
 }

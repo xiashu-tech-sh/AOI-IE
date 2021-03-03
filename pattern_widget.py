@@ -33,55 +33,16 @@ class PatternWidget(QtWidgets.QMainWindow, Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        # # pattern
-        # self.pattern = None
-        # # actions
-        # self.createAction = new_action('./icon/create-100.png', '新建程式')
-        # self.saveAction = new_action('./icon/save-64.png', '保存程式')
-        # self.openAction = new_action('./icon/folder-50.png', '打开程式')
-        #
-        # self.captureAction = new_action('./icon/cap-64.png', '抓取图像')
-        # self.zoomInAction = new_action('./icon/zoom-in-50.png', '放大')
-        # self.zoomOutAction = new_action('./icon/zoom-out-50.png', '缩小')
-        # self.cursorAction = new_action('./icon/cursor-50.png', '选择')
-        # # self.moveAction = new_action('./icon/hand-50.png', '移动')
-        #
-        # self.pcbLocationAction = new_action('./icon/1_pcb.png', 'PCB选取')
-        # self.templateAction = new_action('./icon/green-flag-50.png', '模板定位')
-        # self.maskAction = new_action('./icon/mask-50.png', 'Mask')
-        # self.diodeAction = new_action('./icon/diode.png', '二极管')
-        # self.capacitorAction = new_action('./icon/capacitor.png', '电解电容')
-        # self.resistorAction = new_action('./icon/resistor.png', '色环电阻')
-        # self.slotAction = new_action('./icon/slot.png', '插槽')
-        # self.componentAction = new_action('./icon/component.png', '一般元件')
-        #
-        # self.homeAction = new_action('./icon/home-50.png', '检测界面')
-        #
+        self.pattern = None
         self.cursorAction.triggered.connect(self.cursor_action)
-        #
         for action in [self.pcbLocationAction, self.templateAction,self.maskAction,
                        self.capacitorAction, self.resistorAction, self.slotAction,
-                       self.componentAction,self.diodeAction]:
+                       self.componentAction,self.diodeAction, self.CcapacitorAction]:
             action.triggered.connect(self.mode_change_by_action)
 
         self.createAction.triggered.connect(self.create_pattern)
         self.openAction.triggered.connect(self.load_pattern)
         self.saveAction.triggered.connect(self.save_pattern)
-        #
-        # # init toolbar
-        # self.toolbar = QtWidgets.QToolBar()
-        # self.toolbar.setToolButtonStyle(QtCore.Qt.ToolButtonTextUnderIcon)
-        # self.toolbar.addActions([self.createAction, self.saveAction, self.openAction])
-        # self.toolbar.addSeparator()
-        # self.toolbar.addActions(
-        #     [self.captureAction, self.zoomInAction, self.zoomOutAction, self.cursorAction])
-        # self.toolbar.addSeparator()
-        # self.toolbar.addActions([self.pcbLocationAction, self.templateAction, self.maskAction,self.capacitorAction,self.resistorAction, self.slotAction, self.diodeAction,self.componentAction])
-        # self.toolbar.addSeparator()
-        # self.toolbar.addActions([self.homeAction])
-        # self.toolbar.setIconSize(QtCore.QSize(32, 32))
-        #
-        # # left center view
         self.canvas = Canvas()
         self.canvas.setStyleSheet('background-color: rgb(0, 0, 0);')
         self.scrollArea.setWidget(self.canvas)
@@ -99,14 +60,8 @@ class PatternWidget(QtWidgets.QMainWindow, Ui_MainWindow):
         self.canvas.deleteShape.connect(self.delete_shape)  # 删除形状,参数：classes, name
         self.canvas.pasteShape.connect(self.paste_shape)  # 复制形态 参数 classes,name
         self.canvas.shapeMoved.connect(self.change_shape_coordinate)
-        #
-        # # TODO:canvas右键弹出菜单内容设定
-        # # actions_1 = [self.zoomInAction, self.zoomOutAction, self.captureAction]
-        # # actions_2 = [self.captureAction]
-        # # utils.addActions(self.canvas.menus[0], actions_1)
-        # # utils.addActions(self.canvas.menus[1], actions_2)
-        #
-        # # right top view: TODO
+        # TODO:canvas右键弹出菜单内容设定
+        # right top view: TODO
         # 第一页：程式信息页
         self.patternInfoWidget = PatternInfoWidget()
         # 第二页：定位信息页
@@ -132,13 +87,13 @@ class PatternWidget(QtWidgets.QMainWindow, Ui_MainWindow):
         self.partWidget.savePatternSignal.connect(self.save_pattern)
         self.partWidget.selectedChanged.connect(self.selected_item_changed_from_widget)
         self.partWidget.parameterChanged.connect(self.set_pattern_dirty)
-        # # 极反
-        # self.partWidget.extremely_negative_emit.connect(self.extremely_negative)
-        # # 漏件
-        # self.partWidget.wrong_piece_emit.connect(self.wrong_piece)
-        # # 颜色
-        # self.partWidget.color_emait.connect(self.color_extract)
-        #
+        # 极反
+        self.partWidget.extremely_negative_emit.connect(self.extremely_negative)
+        # 漏件
+        self.partWidget.wrong_piece_emit.connect(self.wrong_piece)
+        # 颜色
+        self.partWidget.color_emait.connect(self.color_extract)
+
         # self.rightTopArea = QtWidgets.QTabWidget()
         self.rightTopArea.addTab(self.patternInfoWidget, '程式信息')
         self.rightTopArea.addTab(self.locationWidget, '定位信息')
@@ -195,15 +150,15 @@ class PatternWidget(QtWidgets.QMainWindow, Ui_MainWindow):
         self.canvas.mobile = False
         self.canvas.zoomInAction = True
         self.canvas.zoomOutAction = False
-    def color_extract(self, label_pos, name, ngtype, path_name, similar_value,set_value):
+    def color_extract(self, label_pos, name, area_ratio,set_value,ngtype):
         for par in self.pattern.parts:
             if par.name == name:
                 par.leak_pos = label_pos
-                par.leak_path = path_name
-                par.leak_similar = similar_value
+                par.leak_similar = area_ratio
                 if ngtype not in par.detection_type:
                     par.detection_type.append(ngtype)
-                self.set_value = set_value
+                print(set_value)
+                par.erron_pos = set_value
                 self.save_pattern()
                 break
     # 保存数据(相对元器件坐标点，元器件名称，类型，图片路径，相似度)
@@ -607,10 +562,10 @@ class PatternWidget(QtWidgets.QMainWindow, Ui_MainWindow):
             self.canvas.part_type = ''
             self.rightTopArea.setTabEnabled(3, True)
             self.rightTopArea.setCurrentWidget(self.maskWidget)
-        elif action in [self.capacitorAction, self.resistorAction, self.slotAction, self.componentAction,self.diodeAction]:
+        elif action in [self.capacitorAction, self.resistorAction, self.slotAction, self.componentAction,self.diodeAction, self.CcapacitorAction]:
             self.canvas.shape_type = 'part'
             if action is self.capacitorAction:
-                logger.debug('选择电容绘制')
+                logger.debug('选择电解电容绘制')
                 self.canvas.part_type = 'capacitor'
             elif action is self.resistorAction:
                 logger.debug('选择电阻绘制')
@@ -624,6 +579,9 @@ class PatternWidget(QtWidgets.QMainWindow, Ui_MainWindow):
             elif action is self.diodeAction:
                 logger.debug('选择二极管绘制')
                 self.canvas.part_type = 'diode'
+            elif action is self.CcapacitorAction:
+                logger.debug('选择陶瓷电容绘制')
+                self.canvas.part_type = 'ceramics'
             self.rightTopArea.setTabEnabled(4, True)
             self.rightTopArea.setCurrentWidget(self.partWidget)
 
@@ -669,6 +627,12 @@ class PatternWidget(QtWidgets.QMainWindow, Ui_MainWindow):
         rectangle = shape.getRectFromLine(*shape.points).toRect()
         # 保存坐标信息
         x, y, w, h = rectangle.x(), rectangle.y(), rectangle.width(), rectangle.height()
+        if w < 0 or h < 0:
+            QtWidgets.QMessageBox.information(self, '提示', '绘制顺序错误')
+            logger.debug('绘制顺序错误')
+            self.canvas.shapes.pop(-1)
+            self.canvas.update()
+            return
         cvImage = self.canvas.cvImage[y:y + h, x:x + w, :].copy()
         pixmap = self.canvas.pixmap.copy(rectangle)
         return x, y, w, h, cvImage, pixmap

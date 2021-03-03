@@ -11,6 +11,7 @@ import random
 import cv2
 from pprint import pprint
 from collections import OrderedDict
+from PyQt5.QtWidgets import QMessageBox
 
 from template import Template
 from mask import Mask
@@ -87,13 +88,13 @@ class Pattern:
 
     def load(self, folder):
         ''' 从本地文件夹加载配置 '''
-        assert os.path.exists(folder), '目标文件夹不存在'
         self.folder = folder
         imagefile = os.path.join(folder, 'image.jpg')
-        assert os.path.exists(imagefile), '模板图片不存在'
         self.imagefile = imagefile
         infofile = os.path.join(folder, 'info.json')
-        assert os.path.exists(infofile), '参数文件不存在'
+        if not os.path.exists(imagefile) or not os.path.exists(infofile):
+            QMessageBox(QMessageBox.Warning, "警告框", "请选择正确的程式路径")
+            return
         self.infofile = infofile
 
         # clear first

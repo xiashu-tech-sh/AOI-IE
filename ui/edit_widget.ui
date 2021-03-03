@@ -13,9 +13,9 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_16">
+  <layout class="QHBoxLayout" name="horizontalLayout_15">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="1,1">
+    <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="9,7">
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
@@ -217,17 +217,13 @@
        </item>
        <item>
         <widget class="QStackedWidget" name="stackedWidget_2">
+         <property name="currentIndex">
+          <number>0</number>
+         </property>
          <widget class="QWidget" name="page_9">
           <layout class="QHBoxLayout" name="horizontalLayout_13">
            <item>
-            <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,10,1" columnminimumwidth="0,0,0">
-             <item row="0" column="2">
-              <widget class="QLabel" name="label_8">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
+            <layout class="QGridLayout" name="gridLayout_4" columnstretch="1,9,1">
              <item row="1" column="0">
               <widget class="QLabel" name="label">
                <property name="text">
@@ -239,19 +235,6 @@
               <widget class="QLabel" name="label_4">
                <property name="text">
                 <string>Blue</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QSlider" name="horizontalSlider">
-               <property name="maximum">
-                <number>255</number>
-               </property>
-               <property name="pageStep">
-                <number>1</number>
-               </property>
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
                </property>
               </widget>
              </item>
@@ -281,6 +264,13 @@
                </property>
               </widget>
              </item>
+             <item row="0" column="2">
+              <widget class="QLabel" name="label_8">
+               <property name="text">
+                <string>0</string>
+               </property>
+              </widget>
+             </item>
              <item row="0" column="0">
               <widget class="QLabel" name="label_3">
                <property name="text">
@@ -288,15 +278,22 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
-              <widget class="QLabel" name="label_5">
+             <item row="2" column="2">
+              <widget class="QLabel" name="label_11">
                <property name="text">
-                <string>Alpha</string>
+                <string>0</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="1">
-              <widget class="QSlider" name="horizontalSlider_4">
+             <item row="1" column="2">
+              <widget class="QLabel" name="label_10">
+               <property name="text">
+                <string>0</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QSlider" name="horizontalSlider">
                <property name="maximum">
                 <number>255</number>
                </property>
@@ -308,24 +305,10 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="2">
-              <widget class="QLabel" name="label_10">
+             <item row="3" column="0" colspan="3">
+              <widget class="QCheckBox" name="checkBox">
                <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="2">
-              <widget class="QLabel" name="label_11">
-               <property name="text">
-                <string/>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="2">
-              <widget class="QLabel" name="label_16">
-               <property name="text">
-                <string/>
+                <string>反转</string>
                </property>
               </widget>
              </item>
@@ -342,85 +325,104 @@
           <number>0</number>
          </property>
          <widget class="QWidget" name="page">
-          <layout class="QHBoxLayout" name="horizontalLayout_12">
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="1,1">
-             <item>
-              <layout class="QGridLayout" name="gridLayout_5" rowstretch="0,0,0">
-               <item row="2" column="0">
-                <widget class="QPushButton" name="detect">
-                 <property name="font">
-                  <font>
-                   <family>微软雅黑</family>
-                   <pointsize>12</pointsize>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>检测</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0" colspan="2">
-                <widget class="QLabel" name="label_6">
-                 <property name="text">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QPushButton" name="pushButton_3">
-                 <property name="font">
-                  <font>
-                   <family>微软雅黑</family>
-                   <pointsize>12</pointsize>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>生成模板</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0" colspan="2">
-                <widget class="QLabel" name="label_7">
-                 <property name="text">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-              </layout>
+            <layout class="QGridLayout" name="gridLayout_5" rowstretch="0,0,0" columnstretch="1,1,0,1" columnminimumwidth="0,0,0,0">
+             <item row="1" column="3">
+              <widget class="QPushButton" name="pushButton_3">
+               <property name="text">
+                <string>保存参数</string>
+               </property>
+              </widget>
              </item>
-             <item>
-              <layout class="QVBoxLayout" name="verticalLayout_7" stretch="1,9">
+             <item row="2" column="2">
+              <widget class="QLabel" name="label_43">
+               <property name="text">
+                <string>%</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="3">
+              <widget class="QPushButton" name="pushButton_5">
+               <property name="text">
+                <string>检测</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1">
+              <widget class="QSpinBox" name="upper_limit">
+               <property name="value">
+                <number>15</number>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1">
+              <widget class="QSpinBox" name="lower_limit">
+               <property name="maximum">
+                <number>100</number>
+               </property>
+               <property name="value">
+                <number>100</number>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="0">
+              <widget class="QLabel" name="label_6">
+               <property name="text">
+                <string>颜色比例下限制：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="2">
+              <widget class="QLabel" name="label_32">
+               <property name="text">
+                <string>%</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_41">
+               <property name="text">
+                <string>测量值：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="2">
+              <widget class="QLabel" name="label_31">
+               <property name="text">
+                <string>%</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0">
+              <widget class="QLabel" name="label_7">
+               <property name="text">
+                <string>颜色比例上限制：</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="2,1">
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="2">
-                 <item>
-                  <widget class="QLabel" name="n_x_threshold_4">
-                   <property name="font">
-                    <font>
-                     <family>微软雅黑</family>
-                     <pointsize>12</pointsize>
-                    </font>
-                   </property>
-                   <property name="text">
-                    <string>模板图像</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
+                <spacer name="horizontalSpacer_2">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
                </item>
                <item>
-                <widget class="QLabel" name="template_image">
-                 <property name="cursor">
-                  <cursorShape>ArrowCursor</cursorShape>
-                 </property>
+                <widget class="QLabel" name="measurements">
                  <property name="styleSheet">
-                  <string notr="true">background-color: rgb(0, 0, 0);</string>
+                  <string notr="true">color: rgb(255, 0, 0);</string>
                  </property>
                  <property name="text">
                   <string/>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
                  </property>
                 </widget>
                </item>
@@ -577,7 +579,27 @@
             <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,1">
              <item>
               <layout class="QGridLayout" name="gridLayout_6">
-               <item row="3" column="1">
+               <item row="5" column="0">
+                <spacer name="horizontalSpacer">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item row="4" column="0" colspan="2">
+                <widget class="QLabel" name="label_13">
+                 <property name="text">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
                 <widget class="QPushButton" name="pushButton_4">
                  <property name="font">
                   <font>
@@ -590,12 +612,8 @@
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0" colspan="2">
-                <widget class="QLabel" name="label_13">
-                 <property name="text">
-                  <string/>
-                 </property>
-                </widget>
+               <item row="1" column="1">
+                <widget class="QLineEdit" name="start_interval_4"/>
                </item>
                <item row="0" column="0" colspan="2">
                 <widget class="QLabel" name="label_9">
@@ -617,8 +635,18 @@
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
-                <widget class="QPushButton" name="pushButton_5">
+               <item row="2" column="1">
+                <widget class="QSlider" name="horizontalSlider_5">
+                 <property name="maximum">
+                  <number>360</number>
+                 </property>
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="label_18">
                  <property name="font">
                   <font>
                    <family>微软雅黑</family>
@@ -626,12 +654,9 @@
                   </font>
                  </property>
                  <property name="text">
-                  <string>旋转</string>
+                  <string>旋转角度：</string>
                  </property>
                 </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QLineEdit" name="start_interval_4"/>
                </item>
               </layout>
              </item>
@@ -1094,7 +1119,7 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>550</width>
+            <width>481</width>
             <height>364</height>
            </rect>
           </property>

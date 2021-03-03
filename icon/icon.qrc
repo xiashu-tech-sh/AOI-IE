@@ -37,5 +37,8 @@
     <file>xiashu.png</file>
     <file>zoom-in-50.png</file>
     <file>zoom-out-50.png</file>
+    <file>ceramic_capacitors.png</file>
+    <file>diode .png</file>
   </qresource>
+  <qresource/>
 </RCC>
